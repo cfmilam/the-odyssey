@@ -10,6 +10,8 @@ window.MathJax = {
   options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
 };
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
 <style>
 :root {
@@ -1919,36 +1921,430 @@ And that is how Goodness is foiled.' ■</p></div>
   </div>
 </div>
 
-<!-- 3. The Cone Model Interactive -->
+<!-- 3. The Cone Model — Full 5-Appendix Version from Cone Model Paper -->
 <h2 id="interactive-cone">The Cone Model</h2>
-<p>This 3D cone unifies Newtonian and Einsteinian perspectives. The Newtonian view (infinite speeds possible) and Einsteinian view (speeds limited to c) are just different projections of the same geometric structure.</p>
+<p>These interactive explorations are adapted from the companion paper <em>A New Approach to Special Relativity by Means of a Cone Model of Time-Dilation</em>. They let you explore the geometry underlying Pope's cone model — from the observer's spherical structure through to the twin paradox.</p>
 
-<div style="background: var(--surface); padding: 1.5rem; border-radius: 8px; margin: 1rem 0;">
-  <canvas id="cone-canvas" width="600" height="500" style="width: 100%; max-width: 600px; height: auto; background: var(--bg); border-radius: 4px;"></canvas>
-  
-  <div style="margin-top: 1rem;">
-    <label for="cone-rotation">Rotate Cone: <span id="rotation-display">0°</span></label>
-    <input type="range" id="cone-rotation" min="0" max="360" step="5" value="45" style="width: 100%; margin-bottom: 1rem;">
-    
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; font-size: 0.9rem;">
-      <div>
-        <strong>Newtonian View:</strong><br>
-        Velocities can reach infinity<br>
-        Time flows absolutely
-      </div>
-      <div>
-        <strong>Einsteinian View:</strong><br>
-        Velocities limited to c<br>
-        Time dilates with motion
-      </div>
-      <div>
-        <strong>Pope's Insight:</strong><br>
-        Same geometry, different projections<br>
-        c is a conversion factor, not speed
-      </div>
-    </div>
-  </div>
-</div>
+
+<style>
+/* Cone Model Appendices CSS */
+.cm-interactive-panel {
+    background: var(--surface);
+    padding: 30px;
+    border-radius: 12px;
+    margin: 20px 0;
+    border: 1px solid var(--border);
+}
+
+.cm-slider-container {
+    margin: 20px 0;
+}
+
+.cm-slider-container label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: var(--fg);
+}
+
+.cm-slider {
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background: var(--surface);
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.cm-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+}
+
+.cm-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    border: none;
+}
+
+.cm-values-display {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.cm-value-box {
+    background: var(--bg);
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    text-align: center;
+}
+
+.cm-value-box .label {
+    font-size: 0.9em;
+    color: var(--accent2);
+    margin-bottom: 5px;
+}
+
+.cm-value-box .value {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: var(--fg);
+}
+
+.cm-animation-canvas {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.cm-step-derivation {
+    margin: 20px 0;
+}
+
+.cm-derivation-step {
+    background: var(--bg);
+    padding: 20px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border-left: 4px solid var(--accent);
+    display: none;
+    color: var(--fg);
+}
+
+.cm-derivation-step.active {
+    display: block;
+}
+
+.cm-next-step-btn {
+    background: var(--accent);
+    color: var(--bg);
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.cm-next-step-btn:hover {
+    background: var(--accent2);
+}
+
+.cm-cone-3d {
+    width: 400px;
+    height: 400px;
+    margin: 20px auto;
+    perspective: 800px;
+    perspective-origin: center center;
+}
+
+.cm-cone-container {
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.3s ease;
+}
+
+.cm-clocks-container {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+}
+
+.cm-clock {
+    width: 100px;
+    height: 100px;
+    border: 3px solid var(--fg);
+    border-radius: 50%;
+    position: relative;
+    background: var(--surface);
+}
+
+.cm-clock-hand {
+    position: absolute;
+    background: #e74c3c;
+    transform-origin: bottom center;
+    left: 50%;
+    bottom: 50%;
+    border-radius: 2px;
+}
+
+.cm-hour-hand {
+    width: 3px;
+    height: 25px;
+    margin-left: -1.5px;
+}
+
+.cm-minute-hand {
+    width: 2px;
+    height: 35px;
+    margin-left: -1px;
+}
+
+.cm-clock-label {
+    text-align: center;
+    margin-top: 10px;
+    font-weight: bold;
+    color: var(--fg);
+}
+
+@media (max-width: 768px) {
+    .cm-cone-3d {
+        width: 300px;
+        height: 300px;
+    }
+    .cm-values-display {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+
+            <!-- Appendix A: The Observer's Sphere -->
+            <div class="appendix">
+                <h3>Appendix A: The Observer's Sphere</h3>
+        <!-- The Observer's Sphere — Editorial Addition -->
+            <p style="font-style: italic; color: var(--accent2); margin-bottom: 20px;">Editorial addition — not part of Pope's original 1986 paper. Included to clarify the three-dimensional geometry underlying the cone model, which could not be easily rendered with the tools available in 1986.</p>
+
+            <p>Pope's cone is not an abstract mathematical convenience. It arises directly from the geometry of observation itself. The observer O sits at the centre of concentric spheres — like an onion — each sphere representing a shell of equal distance (and therefore equal distance-time) from O. These are the spheres of Figure 1, the radial structure of all observational information.</p>
+
+            <p>When this spherical structure is projected into time — that is, when we ask not just <em>where</em> things are but <em>when</em> they are — each sphere becomes a cross-section of a cone. The cone is simply the time-extended form of the observer's spherical geometry. The conic sections that appear throughout relativity (ellipses, parabolas, hyperbolas) are not mysterious abstractions; they are the natural cross-sections of this onion-in-time.</p>
+
+            <p>The interactive visualisation below shows this. Begin with the spheres alone, then introduce the time axis to see the cone emerge. Rotate the view to understand how Figures 8a and 8b are simply different perspectives of this same structure.</p>
+
+            <div class="cm-interactive-panel">
+                <div class="cm-slider-container">
+                    <label for="cone-timeProjection">Time Projection:</label>
+                    <input type="range" id="cone-timeProjection" class="cm-slider" min="0" max="100" step="1" value="0">
+                    <span id="cone-timeProjectionLabel" style="font-size: 0.9em; color: var(--accent2);">0% — Pure spherical geometry</span>
+                </div>
+                <div class="cm-slider-container">
+                    <label for="cone-sphereVelocity">Body X velocity:</label>
+                    <input type="range" id="cone-sphereVelocity" class="cm-slider" min="0" max="100" step="1" value="50">
+                    <span id="cone-sphereVelocityLabel" style="font-size: 0.9em; color: var(--accent2);">0.50c</span>
+                </div>
+                <div class="cm-slider-container">
+                    <label for="cone-sphereOpacity">Shell opacity:</label>
+                    <input type="range" id="cone-sphereOpacity" class="cm-slider" min="5" max="40" step="1" value="15">
+                </div>
+
+                <div id="cone-sphereContainer" style="width: 100%; height: 550px; border-radius: 8px; overflow: hidden; background: var(--bg); position: relative; cursor: grab;">
+                    <div id="cone-sphereInfo" style="position: absolute; bottom: 15px; left: 15px; color: var(--accent2); font-size: 12px; font-family: Helvetica Neue, Arial, sans-serif; pointer-events: none;">
+                        Drag to rotate · Scroll to zoom · Pinch on mobile
+                    </div>
+                </div>
+
+                <p style="text-align: center; color: var(--accent2); font-style: italic; margin-top: 15px;">
+                    At 0% time projection you see pure observer-centred spheres — the onion. At 100% the spheres extend into the time-cone. The red triangle is Pope's Pythagorean time-triangle on the cone surface.
+                </p>
+            </div>
+            </div>
+
+            <!-- Appendix B: Time-Dilation Explorer -->
+            <div class="appendix">
+                <h3>Appendix B: The Pythagorean Time-Dilation Explorer</h3>
+                <div class="cm-interactive-panel">
+                    <div class="cm-slider-container">
+                        <label for="cone-velocitySlider">Velocity (fraction of c):</label>
+                        <input type="range" id="cone-velocitySlider" class="cm-slider" min="0" max="1" step="0.001" value="0.1">
+                        <span id="cone-velocityValue">0.1c</span>
+                    </div>
+
+
+                    <div class="cm-values-display">
+                        <div class="cm-value-box">
+                            <div class="label">Observer Time (t)</div>
+                            <div class="value" id="cone-properTime">1.005 s</div>
+                        </div>
+                        <div class="cm-value-box">
+                            <div class="label">Moving Clock Time (tₓ)</div>
+                            <div class="value" id="cone-coordinateTime">1.000 s</div>
+                        </div>
+                        <div class="cm-value-box">
+                            <div class="label">Distance (s)</div>
+                            <div class="value" id="cone-distance">0.1c·s</div>
+                        </div>
+                        <div class="cm-value-box">
+                            <div class="label">Time Dilation Factor (γ)</div>
+                            <div class="value" id="cone-gamma">1.005</div>
+                        </div>
+                    </div>
+
+                    <canvas id="cone-triangleCanvas" class="cm-animation-canvas" width="400" height="300"></canvas>
+                </div>
+            </div>
+
+            <!-- Appendix C: Cone Model Visualizer -->
+            <div class="appendix">
+                <h3>Appendix C: The Cone Model Visualizer</h3>
+                <div class="cm-interactive-panel">
+                    <div class="cm-slider-container">
+                        <label for="cone-rotationSlider">Viewing Angle:</label>
+                        <input type="range" id="cone-rotationSlider" class="cm-slider" min="0" max="180" step="5" value="90">
+                        <span id="cone-rotationValue">90°</span>
+                    </div>
+
+                    <div class="cm-slider-container">
+                        <label for="cone-coneVelocitySlider">Velocity on Cone:</label>
+                        <input type="range" id="cone-coneVelocitySlider" class="cm-slider" min="0" max="1.0" step="0.01" value="0.5">
+                        <span id="cone-coneVelocityValue">0.5c</span>
+                    </div>
+
+                    <div class="cm-cone-3d" id="cone-coneVisualization">
+                        <div class="cm-cone-container" id="cone-coneContainer">
+                            <canvas id="cone-coneCanvas" width="400" height="400"></canvas>
+                        </div>
+                    </div>
+
+                    <p style="text-align: center; color: var(--accent2); font-style: italic;">
+                        Adjust the viewing angle to see how Figures 8a and 8b are different perspectives of the same cone.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Appendix D: Equivalence Derivation -->
+            <div class="appendix">
+                <h3>Appendix D: Lorentz-Einstein ↔ Pythagoras Equivalence</h3>
+                <div class="cm-interactive-panel">
+                    <div class="cm-step-derivation">
+                        <div class="derivation-step active" id="cone-step0">
+                            <h4>Starting with the Lorentz-Einstein formula:</h4>
+                            $$t = \frac{t_x}{\sqrt{1 - \left(\frac{v}{c}\right)^2}}$$
+                            <p>We want to show this is equivalent to the Pythagorean relation.</p>
+                        </div>
+
+                        <div class="cm-derivation-step" id="cone-step1">
+                            <h4>Step 1: Square both sides</h4>
+                            $$t^2 = \frac{t_x^2}{1 - \left(\frac{v}{c}\right)^2}$$
+                        </div>
+
+                        <div class="cm-derivation-step" id="cone-step2">
+                            <h4>Step 2: Multiply both sides by the denominator</h4>
+                            $$t^2 \left(1 - \left(\frac{v}{c}\right)^2\right) = t_x^2$$
+                        </div>
+
+                        <div class="cm-derivation-step" id="cone-step3">
+                            <h4>Step 3: Expand the left side</h4>
+                            $$t^2 - t^2\left(\frac{v}{c}\right)^2 = t_x^2$$
+                        </div>
+
+                        <div class="cm-derivation-step" id="cone-step4">
+                            <h4>Step 4: Since v = s/t, substitute</h4>
+                            $$t^2 - t^2\left(\frac{s/t}{c}\right)^2 = t_x^2$$
+                            $$t^2 - t^2\left(\frac{s}{ct}\right)^2 = t_x^2$$
+                        </div>
+
+                        <div class="cm-derivation-step" id="cone-step5">
+                            <h4>Step 5: Simplify</h4>
+                            $$t^2 - \left(\frac{s}{c}\right)^2 = t_x^2$$
+                        </div>
+
+                        <div class="cm-derivation-step" id="cone-step6">
+                            <h4>Step 6: Rearrange to Pythagorean form</h4>
+                            $$t^2 - \left(\frac{s}{c}\right)^2 = t_x^2$$
+                            <p>Now simply move the (s/c)² term to the other side:</p>
+                            $$t^2 = \left(\frac{s}{c}\right)^2 + t_x^2$$
+                        </div>
+
+                        <div class="cm-derivation-step" id="cone-step7">
+                            <h4>Step 7: Take the square root</h4>
+                            $$t = \sqrt{\left(\frac{s}{c}\right)^2 + t_x^2}$$
+                            <p>This is precisely Pope's Formula (1) — Pythagoras' Theorem, with the observer's time <em>t</em> as the hypotenuse, and the moving clock's time <em>t<sub>x</sub></em> and the distance-time <em>s/c</em> as the two legs of a right triangle.</p>
+                        </div>
+
+                        <div class="cm-derivation-step" id="cone-step8">
+                            <h4>Final Step: The Geometric Insight</h4>
+                            <p>The Lorentz-Einstein formula (2) and the Pythagorean formula (1) are algebraically identical. Pope's key insight is that Pythagoras is the <em>natural</em> form — a simple right triangle on the surface of the space-time cone — while the Lorentz formula is this same relationship disguised by an unnecessary detour through the concept of 'velocity'.</p>
+                            
+                            <p>In the cone model:</p>
+                            <ul>
+                                <li>The hypotenuse <em>t</em> is the observer O's time (the dilated duration)</li>
+                                <li>One leg (<em>s/c</em>) is the spatial displacement expressed in time units</li>
+                                <li>The other leg (<em>t<sub>x</sub></em>) is the moving body X's own clock time</li>
+                            </ul>
+                            <p>The motion-graph is not flat — it is drawn on the surface of a cone. That is all relativity is.</p>
+                        </div>
+                    </div>
+
+                    <button class="cm-next-step-btn" onclick="coneNextStep()" id="cone-nextBtn">Next Step</button>
+                    <button class="cm-next-step-btn" onclick="coneResetDerivation()" id="cone-resetBtn" style="display: none;">Reset</button>
+                </div>
+            </div>
+
+            <!-- Appendix E: Time Dilation at Scale -->
+            <div class="appendix">
+                <h3>Appendix E: Time Dilation at Scale</h3>
+                <div class="cm-interactive-panel">
+                    <div class="cm-slider-container">
+                        <label for="cone-distanceSlider">Journey Distance:</label>
+                        <input type="range" id="cone-distanceSlider" class="cm-slider" min="0" max="100" step="0.1" value="10">
+                        <span id="cone-distanceValue">10 light-years</span>
+                    </div>
+
+                    <div class="cm-slider-container">
+                        <label for="cone-travelVelocitySlider">Travel Velocity:</label>
+                        <input type="range" id="cone-travelVelocitySlider" class="cm-slider" min="0.1" max="0.999" step="0.001" value="0.8">
+                        <span id="cone-travelVelocityValue">0.8c</span>
+                    </div>
+
+                    <div class="cm-values-display">
+                        <div class="cm-value-box">
+                            <div class="label">Trip Time (Traveler)</div>
+                            <div class="value" id="cone-travelerTime">7.5 years</div>
+                        </div>
+                        <div class="cm-value-box">
+                            <div class="label">Trip Time (Observer)</div>
+                            <div class="value" id="cone-observerTime">12.5 years</div>
+                        </div>
+                        <div class="cm-value-box">
+                            <div class="label">Time Difference</div>
+                            <div class="value" id="cone-timeDifference">5.0 years</div>
+                        </div>
+                        <div class="cm-value-box">
+                            <div class="label">Aging Ratio</div>
+                            <div class="value" id="cone-agingRatio">0.60</div>
+                        </div>
+                    </div>
+
+                    <h4>Twin Paradox Scenario</h4>
+                    <p>Imagine twins: one stays on Earth, the other travels to a distant star and returns.</p>
+                    
+                    <div class="cm-clocks-container">
+                        <div>
+                            <div class="cm-clock" id="cone-earthClock">
+                                <div class="clock-hand hour-hand" id="cone-earthHour"></div>
+                                <div class="clock-hand minute-hand" id="cone-earthMinute"></div>
+                            </div>
+                            <div class="cm-clock-label">Earth Twin</div>
+                        </div>
+                        <div>
+                            <div class="cm-clock" id="cone-spaceClock">
+                                <div class="clock-hand hour-hand" id="cone-spaceHour"></div>
+                                <div class="clock-hand minute-hand" id="cone-spaceMinute"></div>
+                            </div>
+                            <div class="cm-clock-label">Space Twin</div>
+                        </div>
+                    </div>
+
+                    <p style="text-align: center; color: var(--accent2); font-style: italic;">
+                        The clocks show the relative aging difference. Both start synchronized, but the traveling twin ages more slowly.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+            <section class="appendix">
+
 
 <!-- 4. Mass-Energy Interconversion -->
 <h2 id="interactive-mass-energy">Mass-Energy from Angular Momentum</h2>
@@ -2400,121 +2796,8 @@ function initClocksInteractive() {
   drawClocks();
 }
 
-// 3. Cone Model Interactive
-function initConeInteractive() {
-  const rotationSlider = document.getElementById('cone-rotation');
-  const rotationDisplay = document.getElementById('rotation-display');
-  
-  function drawCone() {
-    const { ctx, width, height } = getCanvasContext('cone-canvas');
-    ctx.clearRect(0, 0, width, height);
-    
-    const fg = getComputedColor('--fg');
-    const accent = getComputedColor('--accent');
-    const accent2 = getComputedColor('--accent2');
-    
-    const rotation = parseFloat(rotationSlider.value) * Math.PI / 180;
-    rotationDisplay.textContent = Math.round(parseFloat(rotationSlider.value)) + '°';
-    
-    const centerX = width / 2;
-    const centerY = height / 2;
-    const coneHeight = height * 0.3;
-    const coneRadius = width * 0.2;
-    
-    // 3D cone vertices (simplified isometric projection)
-    const vertices = [];
-    const segments = 20;
-    
-    // Top vertex
-    vertices.push([0, -coneHeight, 0]);
-    
-    // Base circle
-    for (let i = 0; i < segments; i++) {
-      const angle = (i / segments) * 2 * Math.PI;
-      const x = coneRadius * Math.cos(angle);
-      const z = coneRadius * Math.sin(angle);
-      vertices.push([x, 0, z]);
-    }
-    
-    // Rotate and project vertices
-    const projectedVertices = vertices.map(([x, y, z]) => {
-      // Simple rotation around Y axis
-      const rotX = x * Math.cos(rotation) + z * Math.sin(rotation);
-      const rotZ = -x * Math.sin(rotation) + z * Math.cos(rotation);
-      
-      // Isometric projection
-      const screenX = centerX + rotX - rotZ * 0.5;
-      const screenY = centerY + y + rotZ * 0.3;
-      
-      return [screenX, screenY, rotZ]; // include Z for depth sorting
-    });
-    
-    // Draw cone base
-    ctx.strokeStyle = accent;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    for (let i = 1; i < segments + 1; i++) {
-      const [x, y] = projectedVertices[i];
-      if (i === 1) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    }
-    ctx.closePath();
-    ctx.stroke();
-    
-    // Draw cone sides (only visible ones)
-    ctx.strokeStyle = accent2;
-    for (let i = 1; i < segments + 1; i += 4) {
-      const [topX, topY] = projectedVertices[0];
-      const [baseX, baseY] = projectedVertices[i];
-      
-      ctx.beginPath();
-      ctx.moveTo(topX, topY);
-      ctx.lineTo(baseX, baseY);
-      ctx.stroke();
-    }
-    
-    // Draw the space-time triangle on the cone surface
-    const triangleScale = 0.3;
-    const [topX, topY] = projectedVertices[0];
-    const triangleBaseX = centerX + coneRadius * triangleScale * Math.cos(rotation);
-    const triangleBaseY = centerY + coneRadius * triangleScale * 0.3;
-    
-    ctx.strokeStyle = '#ff6b6b';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(topX, topY);
-    ctx.lineTo(triangleBaseX, triangleBaseY);
-    ctx.lineTo(centerX, centerY);
-    ctx.lineTo(topX, topY);
-    ctx.stroke();
-    
-    // Labels
-    ctx.fillStyle = fg;
-    ctx.font = '12px Georgia';
-    ctx.textAlign = 'center';
-    
-    // Newtonian projection (when looking from side)
-    if (Math.abs(rotation) < 0.5 || Math.abs(rotation - Math.PI) < 0.5) {
-      ctx.fillText('Newtonian View: Infinite Velocities', width * 0.2, height - 60);
-    }
-    
-    // Einsteinian projection (when looking from front)
-    if (Math.abs(rotation - Math.PI/2) < 0.5 || Math.abs(rotation - 3*Math.PI/2) < 0.5) {
-      ctx.fillText('Einsteinian View: Velocities → c', width * 0.8, height - 60);
-    }
-    
-    ctx.fillStyle = accent;
-    ctx.font = 'bold 16px Georgia';
-    ctx.fillText('The Cone Model: Unifying Perspectives', width / 2, 30);
-    
-    ctx.fillStyle = fg;
-    ctx.font = '10px Georgia';
-    ctx.fillText('Red triangle shows the Pythagorean relationship on the cone surface', width / 2, height - 20);
-  }
-  
-  rotationSlider.addEventListener('input', drawCone);
-  drawCone();
-}
+// 3. Cone Model Interactive — now handled by separate IIFE below
+function initConeInteractive() { /* no-op — replaced */ }
 
 // 4. Mass-Energy Interactive
 function initMassEnergyInteractive() {
@@ -3076,6 +3359,1005 @@ window.addEventListener('resize', () => {
     initQuantumInteractive();
   }, 100);
 });
+
+// ============================================================
+// CONE MODEL APPENDICES — Full Interactive JS (IIFE)
+// ============================================================
+(function() {
+  'use strict';
+  
+  // Wait for DOM
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initConeAppendices);
+  } else {
+    setTimeout(initConeAppendices, 200);
+  }
+  
+  function initConeAppendices() {
+    let currentStep = 0;
+        const totalSteps = 8;
+        
+        // Velocity slider for Appendix B
+        const velocitySlider = document.getElementById('cone-velocitySlider');
+        const velocityValue = document.getElementById('cone-velocityValue');
+        const properTime = document.getElementById('cone-properTime');
+        const coordinateTime = document.getElementById('cone-coordinateTime');
+        const distance = document.getElementById('cone-distance');
+        const gamma = document.getElementById('cone-gamma');
+        const triangleCanvas = document.getElementById('cone-triangleCanvas');
+        const triangleCtx = triangleCanvas.getContext('2d');
+
+        // Cone visualizer
+        const rotationSlider = document.getElementById('cone-rotationSlider');
+        const rotationValue = document.getElementById('cone-rotationValue');
+        const coneVelocitySlider = document.getElementById('cone-coneVelocitySlider');
+        const coneVelocityValue = document.getElementById('cone-coneVelocityValue');
+        const coneCanvas = document.getElementById('cone-coneCanvas');
+        const coneCtx = coneCanvas.getContext('2d');
+
+        // Time dilation at scale
+        const distanceSlider = document.getElementById('cone-distanceSlider');
+        const distanceValue = document.getElementById('cone-distanceValue');
+        const travelVelocitySlider = document.getElementById('cone-travelVelocitySlider');
+        const travelVelocityValue = document.getElementById('cone-travelVelocityValue');
+        const travelerTime = document.getElementById('cone-travelerTime');
+        const observerTime = document.getElementById('cone-observerTime');
+        const timeDifference = document.getElementById('cone-timeDifference');
+        const agingRatio = document.getElementById('cone-agingRatio');
+
+        // Clock animation variables
+        let clockAnimationId;
+
+        function coneSetVelocity(v) {
+            velocitySlider.value = v;
+            updateTimeDialation();
+        }
+
+        function updateTimeDialation() {
+            const v = parseFloat(velocitySlider.value);
+            velocityValue.textContent = v >= 1 ? '1.000c (limit)' : v.toFixed(3) + 'c';
+            
+            // Fix observer time t = const, derive tₓ and s/c
+            // t² = (s/c)² + tₓ²   (Pythagoras on the cone)
+            // s/c = v·t,  tₓ = t·√(1 - v²)
+            // At v=c: tₓ→0, s/c→t (triangle collapses to line)
+            const t_obs = 1.0; // fixed observer time (hypotenuse)
+            const vClamped = Math.min(v, 1.0);
+            const vSquared = vClamped * vClamped;
+            const tx = t_obs * Math.sqrt(1 - vSquared); // moving clock
+            const sc = vClamped * t_obs; // s/c (distance in time units)
+            const gammaValue = vSquared < 1 ? 1 / Math.sqrt(1 - vSquared) : Infinity;
+            
+            properTime.textContent = t_obs.toFixed(3) + ' s';
+            coordinateTime.textContent = tx.toFixed(3) + ' s';
+            distance.textContent = sc.toFixed(3) + 'c·s';
+            gamma.textContent = gammaValue === Infinity ? '∞' : gammaValue.toFixed(3);
+            
+            drawTriangle(vClamped, tx, sc, t_obs);
+        }
+
+        function drawTriangle(v, tx, sc, t_obs) {
+            const ctx = triangleCtx;
+            ctx.clearRect(0, 0, 400, 300);
+            
+            const scale = 200; // hypotenuse t always = 200px
+            const offsetX = 60;
+            const offsetY = 260;
+            
+            // Draw axes
+            ctx.strokeStyle = 'var(--fg)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(offsetX, offsetY);
+            ctx.lineTo(offsetX + 320, offsetY);
+            ctx.moveTo(offsetX, offsetY);
+            ctx.lineTo(offsetX, offsetY - 230);
+            ctx.stroke();
+            
+            // Axis labels
+            ctx.fillStyle = '#7f8c8d';
+            ctx.font = '12px Georgia, Times';
+            ctx.fillText('T (time axis)', offsetX + 240, offsetY + 18);
+            ctx.fillText('S/c', offsetX - 30, offsetY - 200);
+
+            // Triangle: horizontal = tₓ, vertical = s/c, hypotenuse = t (constant length)
+            const txPx = tx * scale;
+            const scPx = sc * scale;
+            
+            const isDegenerate = v >= 0.999;
+            
+            if (isDegenerate) {
+                // Degenerate: line from O straight up (s/c = t, tₓ = 0)
+                ctx.strokeStyle = '#ff4444';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.moveTo(offsetX, offsetY);
+                ctx.lineTo(offsetX, offsetY - scale);
+                ctx.stroke();
+                
+                // Static glow (no animation loop needed)
+                ctx.globalAlpha = 0.4;
+                ctx.strokeStyle = '#ff6666';
+                ctx.lineWidth = 8;
+                ctx.beginPath();
+                ctx.moveTo(offsetX, offsetY);
+                ctx.lineTo(offsetX, offsetY - scale);
+                ctx.stroke();
+                ctx.globalAlpha = 1.0;
+                
+                // Label
+                ctx.fillStyle = '#ff4444';
+                ctx.font = 'bold 13px Georgia, Times';
+                ctx.fillText('v = c: tₓ = 0', offsetX + 12, offsetY - scale / 2);
+                ctx.fillText('t = s/c (degenerate)', offsetX + 12, offsetY - scale / 2 + 18);
+                
+                // Body X marker
+                ctx.beginPath();
+                ctx.arc(offsetX, offsetY - scale, 5, 0, 2 * Math.PI);
+                ctx.fillStyle = '#ff4444';
+                ctx.fill();
+                ctx.fillStyle = '#ff4444';
+                ctx.font = 'bold 14px Georgia, Times';
+                ctx.fillText('X', offsetX + 10, offsetY - scale + 5);
+            } else {
+                // Normal triangle
+                ctx.strokeStyle = '#e74c3c';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(offsetX, offsetY); // O
+                ctx.lineTo(offsetX + txPx, offsetY); // end of tₓ
+                ctx.lineTo(offsetX + txPx, offsetY - scPx); // end of s/c
+                ctx.lineTo(offsetX, offsetY); // back to O (hypotenuse)
+                ctx.stroke();
+                
+                // Fill
+                ctx.fillStyle = 'rgba(231, 76, 60, 0.08)';
+                ctx.fill();
+                
+                // Right angle marker
+                if (txPx > 15 && scPx > 15) {
+                    ctx.strokeStyle = '#bdc3c7';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(offsetX + txPx - 10, offsetY);
+                    ctx.lineTo(offsetX + txPx - 10, offsetY - 10);
+                    ctx.lineTo(offsetX + txPx, offsetY - 10);
+                    ctx.stroke();
+                }
+                
+                // Body X marker at top of s/c
+                ctx.beginPath();
+                ctx.arc(offsetX + txPx, offsetY - scPx, 4, 0, 2 * Math.PI);
+                ctx.fillStyle = '#e74c3c';
+                ctx.fill();
+                
+                // Labels
+                ctx.fillStyle = 'var(--fg)';
+                ctx.font = '13px Georgia, Times';
+                
+                // tₓ label (below horizontal leg)
+                if (txPx > 20) {
+                    ctx.fillText('tₓ = ' + tx.toFixed(3) + ' s', offsetX + txPx / 2 - 30, offsetY + 18);
+                }
+                
+                // s/c label (right of vertical leg)
+                if (scPx > 20) {
+                    ctx.fillText('s/c = ' + sc.toFixed(3), offsetX + txPx + 8, offsetY - scPx / 2 + 4);
+                }
+                
+                // t label (along hypotenuse)
+                const midX = (offsetX + offsetX + txPx) / 2;
+                const midY = (offsetY + offsetY - scPx) / 2;
+                ctx.font = 'bold 13px Georgia, Times';
+                ctx.fillText('t = ' + t_obs.toFixed(3) + ' s', midX - 40, midY - 8);
+                
+                // X label
+                ctx.font = 'bold 14px Georgia, Times';
+                ctx.fillText('X', offsetX + txPx + 8, offsetY - scPx + 4);
+                
+                // O label
+                ctx.fillText('O', offsetX - 18, offsetY + 5);
+            }
+        }
+
+        function drawCone() {
+            const ctx = coneCtx;
+            const rotation = parseFloat(rotationSlider.value);
+            const vel = Math.min(parseFloat(coneVelocitySlider.value), 1.0);
+            
+            ctx.clearRect(0, 0, 400, 400);
+            
+            // Cone geometry: apex O at left, opens rightward along T axis
+            // rotation=0° → end view (Figure 8a: looking down the T axis)
+            // rotation=90° → 3/4 view
+            // rotation=180° → side view (Figure 8b: T horizontal, S vertical)
+            const t = rotation / 180; // 0=end, 1=side
+            
+            const oX = 40; // apex O position
+            const oY = 200;
+            const coneLen = 180; // cone length along T
+            const coneR = 180; // equal scale: 45° half-angle, so v=c lies exactly on cone surface
+            
+            // As rotation increases, cone stretches horizontally and flattens vertically
+            const horizStretch = t; // 0=no horizontal extent, 1=full
+            const vertRadius = 1; // always show full radius for S dimension
+            const perspSquash = 1 - t * 0.7; // ellipse squash for depth (1=circle, 0.3=thin ellipse)
+            
+            ctx.strokeStyle = '#3498db';
+            ctx.lineWidth = 2;
+            
+            if (t < 0.15) {
+                // End view (Figure 8a) — looking down the T axis from ahead
+                // See concentric circles (the observer's spheres) and radial S dimension
+                const cx = 200, cy = 200;
+                
+                // Concentric circles (cross-sections at different T)
+                ctx.strokeStyle = '#7f8c8d';
+                for (let i = 1; i <= 4; i++) {
+                    ctx.globalAlpha = 0.3 + i * 0.15;
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, i * 35, 0, 2 * Math.PI);
+                    ctx.stroke();
+                }
+                ctx.globalAlpha = 1.0;
+                
+                // Outer circle (cone boundary = c)
+                ctx.strokeStyle = '#3498db';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.arc(cx, cy, 150, 0, 2 * Math.PI);
+                ctx.stroke();
+                
+                // S axis (vertical through centre)
+                ctx.strokeStyle = 'var(--fg)';
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([4, 3]);
+                ctx.beginPath();
+                ctx.moveTo(cx, cy - 170);
+                ctx.lineTo(cx, cy + 170);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                
+                // Velocity vector from O outward
+                if (vel > 0.01) {
+                    const vLen = vel * 150; // fraction of c = fraction of outer circle
+                    ctx.strokeStyle = '#e74c3c';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(cx, cy);
+                    ctx.lineTo(cx + vLen, cy);
+                    ctx.stroke();
+                    
+                    // Arrowhead
+                    ctx.beginPath();
+                    ctx.moveTo(cx + vLen, cy);
+                    ctx.lineTo(cx + vLen - 8, cy - 5);
+                    ctx.lineTo(cx + vLen - 8, cy + 5);
+                    ctx.closePath();
+                    ctx.fillStyle = '#e74c3c';
+                    ctx.fill();
+                    
+                    // Label
+                    ctx.fillStyle = '#e74c3c';
+                    ctx.font = '13px Georgia, Times';
+                    ctx.fillText('v = ' + vel.toFixed(2) + 'c', cx + vLen + 5, cy - 8);
+                }
+                
+                // Centre O
+                ctx.beginPath();
+                ctx.arc(cx, cy, 4, 0, 2 * Math.PI);
+                ctx.fillStyle = 'var(--fg)';
+                ctx.fill();
+                ctx.fillStyle = 'var(--fg)';
+                ctx.font = 'bold 14px Georgia, Times';
+                ctx.fillText('O', cx - 15, cy + 5);
+                
+                // Labels
+                ctx.fillStyle = '#7f8c8d';
+                ctx.font = '12px Georgia, Times';
+                ctx.fillText('S', cx + 5, cy - 160);
+                ctx.fillText('−S', cx + 5, cy + 175);
+                ctx.fillText('c (boundary)', cx + 100, cy - 120);
+                ctx.fillText('End view — Figure 8a', 120, 385);
+                
+            } else if (t > 0.85) {
+                // Side view (Figure 8b) — T horizontal, S vertical
+                // Cone: apex O at left, two lines diverging to upper-right and lower-right
+                
+                // Axes
+                ctx.strokeStyle = 'var(--fg)';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([4, 3]);
+                // T axis
+                ctx.beginPath();
+                ctx.moveTo(oX, oY);
+                ctx.lineTo(oX + coneLen + 30, oY);
+                ctx.stroke();
+                // S axis
+                ctx.beginPath();
+                ctx.moveTo(oX, oY - coneR - 20);
+                ctx.lineTo(oX, oY + coneR + 20);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                
+                // Cone edges (slope = c)
+                ctx.strokeStyle = '#3498db';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.moveTo(oX, oY);
+                ctx.lineTo(oX + coneLen, oY - coneR);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(oX, oY);
+                ctx.lineTo(oX + coneLen, oY + coneR);
+                ctx.stroke();
+                
+                // Reference velocity lines (faint, showing convergence toward c)
+                ctx.lineWidth = 1;
+                const refVels = [0.2, 0.4, 0.6, 0.8];
+                for (const rv of refVels) {
+                    ctx.strokeStyle = 'rgba(127, 140, 141, 0.3)';
+                    const endT = coneLen * 0.9;
+                    const endS = rv * endT; // slope = v, within cone since v < 1
+                    ctx.beginPath();
+                    ctx.moveTo(oX, oY);
+                    ctx.lineTo(oX + endT, oY - endS);
+                    ctx.stroke();
+                }
+                
+                // Active velocity worldline from O (slope = v in S-T plane)
+                if (vel > 0.01) {
+                    const tObsPx = coneLen * 0.85; // observer time extent
+                    const sPx = vel * tObsPx; // s/c = v·t (slope = v, always inside cone)
+                    
+                    // Worldline of X
+                    ctx.strokeStyle = '#e74c3c';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(oX, oY);
+                    ctx.lineTo(oX + tObsPx, oY - sPx);
+                    ctx.stroke();
+                    
+                    // X marker at end of worldline
+                    ctx.beginPath();
+                    ctx.arc(oX + tObsPx, oY - sPx, 4, 0, 2 * Math.PI);
+                    ctx.fillStyle = '#e74c3c';
+                    ctx.fill();
+                    
+                    // Dashed projections to axes
+                    ctx.strokeStyle = 'rgba(231, 76, 60, 0.4)';
+                    ctx.lineWidth = 1;
+                    ctx.setLineDash([4, 3]);
+                    // Vertical drop to T axis (shows observer time t)
+                    ctx.beginPath();
+                    ctx.moveTo(oX + tObsPx, oY - sPx);
+                    ctx.lineTo(oX + tObsPx, oY);
+                    ctx.stroke();
+                    // Horizontal to S axis (shows s/c)
+                    ctx.beginPath();
+                    ctx.moveTo(oX + tObsPx, oY - sPx);
+                    ctx.lineTo(oX, oY - sPx);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    
+                    // tₓ tick on T axis
+                    const txFrac = Math.sqrt(1 - vel * vel);
+                    const txPx = txFrac * tObsPx;
+                    ctx.strokeStyle = '#27ae60';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(oX + txPx, oY - 6);
+                    ctx.lineTo(oX + txPx, oY + 6);
+                    ctx.stroke();
+                    
+                    // Labels
+                    ctx.font = '12px Georgia, Times';
+                    ctx.fillStyle = '#e74c3c';
+                    ctx.fillText('X', oX + tObsPx + 8, oY - sPx + 4);
+                    ctx.fillText('v = ' + vel.toFixed(2) + 'c', oX + tObsPx * 0.35, oY - sPx * 0.5 - 8);
+                    
+                    // Axis annotations
+                    ctx.fillStyle = 'rgba(231, 76, 60, 0.7)';
+                    ctx.fillText('t', oX + tObsPx - 3, oY + 18);
+                    ctx.fillText('s/c', oX - 28, oY - sPx + 4);
+                    ctx.fillStyle = '#27ae60';
+                    ctx.fillText('tₓ', oX + txPx - 5, oY + 18);
+                }
+                
+                // O label
+                ctx.fillStyle = 'var(--fg)';
+                ctx.font = 'bold 14px Georgia, Times';
+                ctx.fillText('O', oX - 18, oY + 5);
+                
+                // Axis labels
+                ctx.fillStyle = '#7f8c8d';
+                ctx.font = '12px Georgia, Times';
+                ctx.fillText('T', oX + coneLen + 10, oY + 15);
+                ctx.fillText('S', oX - 15, oY - coneR - 10);
+                ctx.fillText('−S', oX - 20, oY + coneR + 18);
+                ctx.fillText('c', oX + coneLen - 15, oY - coneR - 5);
+                ctx.fillText('−c', oX + coneLen - 18, oY + coneR + 15);
+                ctx.fillText('Side view — Figure 8b', 120, 385);
+                
+            } else {
+                // 3/4 perspective view — transition between end and side
+                const perspT = (t - 0.15) / 0.7; // 0 to 1 within this range
+                
+                // Apex
+                const apexX = 200 - perspT * 160;
+                const apexY = 200;
+                const baseX = apexX + perspT * coneLen;
+                const ellipseRx = coneR * (1 - perspT * 0.7); // depth squash
+                const ellipseRy = coneR;
+                
+                // Cone edges from apex to base ellipse top/bottom
+                ctx.strokeStyle = '#3498db';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(apexX, apexY);
+                ctx.lineTo(baseX, apexY - ellipseRy * 0.85);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(apexX, apexY);
+                ctx.lineTo(baseX, apexY + ellipseRy * 0.85);
+                ctx.stroke();
+                
+                // Elliptical cross-sections
+                ctx.strokeStyle = '#7f8c8d';
+                ctx.lineWidth = 1;
+                for (let i = 1; i <= 4; i++) {
+                    const frac = i / 5;
+                    const cx = apexX + (baseX - apexX) * frac;
+                    const rx = ellipseRx * frac * 0.85;
+                    const ry = ellipseRy * frac * 0.85;
+                    ctx.globalAlpha = 0.3 + frac * 0.3;
+                    ctx.beginPath();
+                    ctx.ellipse(cx, apexY, rx, ry, 0, 0, 2 * Math.PI);
+                    ctx.stroke();
+                }
+                ctx.globalAlpha = 1.0;
+                
+                // Base ellipse
+                ctx.strokeStyle = '#3498db';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.ellipse(baseX, apexY, ellipseRx * 0.85, ellipseRy * 0.85, 0, 0, 2 * Math.PI);
+                ctx.stroke();
+                
+                // Velocity triangle (projected onto cone surface)
+                if (vel > 0.01) {
+                    const tObs = 0.7;
+                    
+                    // The cone edge at tObs fraction goes from apex to:
+                    //   edge point = (apexX + tObs*(baseX-apexX), apexY - tObs*ellipseRy*0.85)
+                    // The T-axis at tObs fraction is:
+                    //   axis point = (apexX + tObs*(baseX-apexX), apexY)
+                    // 
+                    // X lies on the cone surface. In the drawn geometry, the cone surface
+                    // from apex to edge defines the visual angle. The hypotenuse from O to X
+                    // must have constant visual length for all v (it represents observer time t).
+                    //
+                    // We compute X by: the visual angle of the cone edge from horizontal is α.
+                    // X sits at angle v*α from horizontal (v=0 → T-axis, v=1 → cone edge).
+                    // The hypotenuse visual length = distance from apex to edge point (at tObs).
+                    
+                    const edgeDx = tObs * (baseX - apexX);
+                    const edgeDy = tObs * ellipseRy * 0.85; // positive = upward displacement
+                    const coneAlpha = Math.atan2(edgeDy, edgeDx); // visual half-angle of cone
+                    const hypLen = Math.sqrt(edgeDx * edgeDx + edgeDy * edgeDy); // hypotenuse px length
+                    
+                    // X at angle v * coneAlpha from horizontal, at distance hypLen from apex
+                    const xAngle = vel * coneAlpha;
+                    const xPosX = apexX + hypLen * Math.cos(xAngle);
+                    const xPosY = apexY - hypLen * Math.sin(xAngle);
+                    
+                    const txPx = xPosX - apexX;  // horizontal projection = tₓ
+                    const scPx = apexY - xPosY;   // vertical projection = s/c
+                    
+                    ctx.strokeStyle = '#e74c3c';
+                    ctx.lineWidth = 2.5;
+                    ctx.beginPath();
+                    ctx.moveTo(apexX, apexY);
+                    ctx.lineTo(apexX + txPx, apexY);
+                    ctx.lineTo(apexX + txPx, apexY - scPx);
+                    ctx.lineTo(apexX, apexY);
+                    ctx.stroke();
+                    ctx.fillStyle = 'rgba(231, 76, 60, 0.08)';
+                    ctx.fill();
+                    
+                    ctx.beginPath();
+                    ctx.arc(apexX + txPx, apexY - scPx, 3, 0, 2 * Math.PI);
+                    ctx.fillStyle = '#e74c3c';
+                    ctx.fill();
+                }
+                
+                // Apex O
+                ctx.beginPath();
+                ctx.arc(apexX, apexY, 4, 0, 2 * Math.PI);
+                ctx.fillStyle = 'var(--fg)';
+                ctx.fill();
+                ctx.fillStyle = 'var(--fg)';
+                ctx.font = 'bold 14px Georgia, Times';
+                ctx.fillText('O', apexX - 15, apexY + 5);
+            }
+            
+            rotationValue.textContent = rotation + '°';
+            coneVelocityValue.textContent = vel >= 1 ? '1.00c (limit)' : vel.toFixed(2) + 'c';
+        }
+
+        function coneNextStep() {
+            if (currentStep < totalSteps) {
+                document.getElementById('step' + currentStep).classList.remove('active');
+                currentStep++;
+                document.getElementById('step' + currentStep).classList.add('active');
+                
+                if (currentStep === totalSteps) {
+                    document.getElementById('cone-nextBtn').style.display = 'none';
+                    document.getElementById('cone-resetBtn').style.display = 'inline-block';
+                }
+                
+                // Re-render MathJax for the new step
+                MathJax.typesetPromise([document.getElementById('step' + currentStep)]).then(() => {
+                    // MathJax has finished rendering
+                });
+            }
+        }
+
+        function coneResetDerivation() {
+            for (let i = 1; i <= totalSteps; i++) {
+                document.getElementById('step' + i).classList.remove('active');
+            }
+            document.getElementById('cone-step0').classList.add('active');
+            currentStep = 0;
+            document.getElementById('cone-nextBtn').style.display = 'inline-block';
+            document.getElementById('cone-resetBtn').style.display = 'none';
+        }
+
+        function updateTimeDilationAtScale() {
+            const dist = parseFloat(distanceSlider.value); // light-years
+            const v = parseFloat(travelVelocitySlider.value); // fraction of c
+            
+            distanceValue.textContent = dist.toFixed(1) + ' light-years';
+            travelVelocityValue.textContent = v.toFixed(3) + 'c';
+            
+            // Calculate times
+            const observerTripTime = dist / v; // years (round trip)
+            const gammaFactor = 1 / Math.sqrt(1 - v * v);
+            const travelerTripTime = observerTripTime / gammaFactor; // time dilation
+            const timeDiff = observerTripTime - travelerTripTime;
+            const aging = travelerTripTime / observerTripTime;
+            
+            travelerTime.textContent = travelerTripTime.toFixed(1) + ' years';
+            observerTime.textContent = observerTripTime.toFixed(1) + ' years';
+            timeDifference.textContent = timeDiff.toFixed(1) + ' years';
+            agingRatio.textContent = aging.toFixed(2);
+            
+            animateClocks(travelerTripTime, observerTripTime);
+        }
+
+        function animateClocks(travelerYears, observerYears) {
+            const earthHour = document.getElementById('cone-earthHour');
+            const earthMinute = document.getElementById('cone-earthMinute');
+            const spaceHour = document.getElementById('cone-spaceHour');
+            const spaceMinute = document.getElementById('cone-spaceMinute');
+            
+            // Animate based on the time ratio
+            const ratio = travelerYears / observerYears;
+            
+            // Simple animation showing relative speeds
+            let earthAngle = 0;
+            let spaceAngle = 0;
+            
+            if (clockAnimationId) {
+                clearInterval(clockAnimationId);
+            }
+            
+            clockAnimationId = setInterval(() => {
+                earthAngle += 6; // 6 degrees per step for Earth
+                spaceAngle += 6 * ratio; // slower for space traveler
+                
+                earthHour.style.transform = `rotate(${earthAngle}deg)`;
+                earthMinute.style.transform = `rotate(${earthAngle * 12}deg)`;
+                spaceHour.style.transform = `rotate(${spaceAngle}deg)`;
+                spaceMinute.style.transform = `rotate(${spaceAngle * 12}deg)`;
+            }, 100);
+        }
+
+        // Event listeners
+        velocitySlider.addEventListener('input', updateTimeDialation);
+        rotationSlider.addEventListener('input', drawCone);
+        coneVelocitySlider.addEventListener('input', drawCone);
+        distanceSlider.addEventListener('input', updateTimeDilationAtScale);
+        travelVelocitySlider.addEventListener('input', updateTimeDilationAtScale);
+
+        // === THE OBSERVER'S SPHERE (Three.js) ===
+        (function() {
+            const container = document.getElementById('cone-sphereContainer');
+            const tpSlider = document.getElementById('cone-timeProjection');
+            const tpLabel = document.getElementById('cone-timeProjectionLabel');
+            const velSlider = document.getElementById('cone-sphereVelocity');
+            const velLabel = document.getElementById('cone-sphereVelocityLabel');
+            const opacSlider = document.getElementById('cone-sphereOpacity');
+
+            // Scene setup
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.set(3.5, 2.5, 4);
+            camera.lookAt(0, 0, 0);
+
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setClearColor(0x0a0a1a);
+            renderer.sortObjects = true;
+            container.appendChild(renderer.domElement);
+
+            // Orbit controls
+            const controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.08;
+            controls.rotateSpeed = 0.6;
+            controls.minDistance = 2;
+            controls.maxDistance = 15;
+            controls.target.set(1, 0, 0);
+            controls.update();
+
+            // Lighting
+            const ambient = new THREE.AmbientLight(0x404060, 0.6);
+            scene.add(ambient);
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            dirLight.position.set(5, 5, 5);
+            scene.add(dirLight);
+            const backLight = new THREE.DirectionalLight(0x4466aa, 0.3);
+            backLight.position.set(-3, -2, -3);
+            scene.add(backLight);
+
+            // Shell colors (inner to outer)
+            const shellColors = [0x4fc3f7, 0x29b6f6, 0x03a9f4, 0x0288d1];
+            const shellRadii = [0.5, 1.0, 1.5, 2.0];
+            const shellSegments = 48;
+
+            // Create shell meshes (translucent spheres)
+            const shells = [];
+            const shellWires = [];
+            for (let i = 0; i < shellRadii.length; i++) {
+                // Translucent surface
+                const geo = new THREE.SphereGeometry(shellRadii[i], shellSegments, shellSegments / 2);
+                const mat = new THREE.MeshPhongMaterial({
+                    color: shellColors[i],
+                    transparent: true,
+                    opacity: 0.12,
+                    side: THREE.DoubleSide,
+                    depthWrite: false,
+                    shininess: 80,
+                    specular: 0x222244
+                });
+                const mesh = new THREE.Mesh(geo, mat);
+                mesh.renderOrder = i;
+                scene.add(mesh);
+                shells.push(mesh);
+
+                // Wireframe rings (latitude lines)
+                const wireGeo = new THREE.SphereGeometry(shellRadii[i], shellSegments, shellSegments / 2);
+                const wireMat = new THREE.MeshBasicMaterial({
+                    color: shellColors[i],
+                    wireframe: true,
+                    transparent: true,
+                    opacity: 0.25,
+                    depthWrite: false
+                });
+                const wireMesh = new THREE.Mesh(wireGeo, wireMat);
+                wireMesh.renderOrder = i;
+                scene.add(wireMesh);
+                shellWires.push(wireMesh);
+            }
+
+            // Origin marker O
+            const originGeo = new THREE.SphereGeometry(0.06, 16, 16);
+            const originMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+            const originMesh = new THREE.Mesh(originGeo, originMat);
+            scene.add(originMesh);
+
+            // S axis (vertical through O)
+            const sAxisGeo = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(0, -3, 0),
+                new THREE.Vector3(0, 3, 0)
+            ]);
+            const sAxisMat = new THREE.LineBasicMaterial({ color: 0x888899, transparent: true, opacity: 0.5 });
+            const sAxis = new THREE.Line(sAxisGeo, sAxisMat);
+            scene.add(sAxis);
+
+            // T axis (time — horizontal, extends with projection)
+            const tAxisGeo = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(0, 0, 0),
+                new THREE.Vector3(6, 0, 0)
+            ]);
+            const tAxisMat = new THREE.LineDashedMaterial({ color: 0x888899, dashSize: 0.15, gapSize: 0.08, transparent: true, opacity: 0.0 });
+            const tAxis = new THREE.Line(tAxisGeo, tAxisMat);
+            tAxis.computeLineDistances();
+            scene.add(tAxis);
+
+            // Cone wireframe lines (from O along the cone surface)
+            const coneLines = [];
+            const nConeLines = 16;
+            for (let i = 0; i < nConeLines; i++) {
+                const angle = (i / nConeLines) * Math.PI * 2;
+                const lineGeo = new THREE.BufferGeometry().setFromPoints([
+                    new THREE.Vector3(0, 0, 0),
+                    new THREE.Vector3(4, Math.cos(angle) * 2, Math.sin(angle) * 2)
+                ]);
+                const lineMat = new THREE.LineBasicMaterial({
+                    color: 0x4fc3f7,
+                    transparent: true,
+                    opacity: 0.0
+                });
+                const line = new THREE.Line(lineGeo, lineMat);
+                scene.add(line);
+                coneLines.push({ line, angle });
+            }
+
+            // Pythagorean triangle
+            const triGeo = new THREE.BufferGeometry();
+            const triMat = new THREE.MeshBasicMaterial({
+                color: 0xe74c3c,
+                transparent: true,
+                opacity: 0.3,
+                side: THREE.DoubleSide,
+                depthWrite: false
+            });
+            const triMesh = new THREE.Mesh(triGeo, triMat);
+            triMesh.renderOrder = 100;
+            scene.add(triMesh);
+
+            // Triangle edges
+            const triEdgeGeo = new THREE.BufferGeometry();
+            const triEdgeMat = new THREE.LineBasicMaterial({ color: 0xe74c3c, linewidth: 2 });
+            const triEdge = new THREE.Line(triEdgeGeo, triEdgeMat);
+            scene.add(triEdge);
+
+            // Body X marker
+            const xGeo = new THREE.SphereGeometry(0.05, 12, 12);
+            const xMat = new THREE.MeshBasicMaterial({ color: 0xe74c3c });
+            const xMesh = new THREE.Mesh(xGeo, xMat);
+            xMesh.visible = false;
+            scene.add(xMesh);
+
+            // Degenerate limit line (v = c): line along cone surface from O
+            const degLineGeo = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(0, 0, 0),
+                new THREE.Vector3(0, 1.5, 0) // will be updated
+            ]);
+            const degLineMat = new THREE.LineBasicMaterial({
+                color: 0xff4444,
+                transparent: true,
+                opacity: 0.0,
+                linewidth: 2
+            });
+            const degLine = new THREE.Line(degLineGeo, degLineMat);
+            scene.add(degLine);
+
+            // Glow line (duplicate, thicker appearance via second line slightly offset)
+            const degGlowGeo = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(0, 0, 0),
+                new THREE.Vector3(0, 1.5, 0)
+            ]);
+            const degGlowMat = new THREE.LineBasicMaterial({
+                color: 0xff6666,
+                transparent: true,
+                opacity: 0.0,
+                linewidth: 2
+            });
+            const degGlow = new THREE.Line(degGlowGeo, degGlowMat);
+            scene.add(degGlow);
+
+            // Sprite labels
+            function makeLabel(text, color) {
+                const canvas = document.createElement('canvas');
+                canvas.width = 128; canvas.height = 64;
+                const ctx = canvas.getContext('2d');
+                ctx.font = 'bold 36px Helvetica Neue, Arial, sans-serif';
+                ctx.fillStyle = color || '#ffffff';
+                ctx.textAlign = 'center';
+                ctx.fillText(text, 64, 44);
+                const tex = new THREE.CanvasTexture(canvas);
+                const spriteMat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
+                const sprite = new THREE.Sprite(spriteMat);
+                sprite.scale.set(0.5, 0.25, 1);
+                scene.add(sprite);
+                return sprite;
+            }
+
+            const labelO = makeLabel('O', '#ffffff');
+            const labelS = makeLabel('S', '#aaaacc');
+            const labelNS = makeLabel('-S', '#aaaacc');
+            const labelT = makeLabel('T', '#aaaacc');
+            labelT.visible = false;
+            const labelTx = makeLabel('tₓ', '#e74c3c');
+            labelTx.visible = false;
+            const labelSc = makeLabel('s/c', '#e74c3c');
+            labelSc.visible = false;
+            const labelTobs = makeLabel('t', '#e74c3c');
+            labelTobs.visible = false;
+            const labelX = makeLabel('X', '#e74c3c');
+            labelX.visible = false;
+
+            // Degenerate limit annotation
+            const labelDegen = makeLabel('v = c', '#ff4444');
+            labelDegen.visible = false;
+            labelDegen.scale.set(0.6, 0.3, 1);
+
+            // (annotation removed — not readable over sphere grid)
+
+            let degTime = 0; // for pulse animation
+
+            function updateScene() {
+                const tp = parseFloat(tpSlider.value) / 100;
+                const vel = parseFloat(velSlider.value) / 100;
+                const opac = parseFloat(opacSlider.value) / 100;
+
+                velLabel.textContent = vel.toFixed(2) + 'c';
+                if (tp < 0.01) tpLabel.textContent = '0% — Pure spherical geometry';
+                else if (tp > 0.99) tpLabel.textContent = '100% — Full time-cone';
+                else tpLabel.textContent = Math.round(tp * 100) + '% — Spheres extending into time';
+
+                // Update shells: morph from sphere to cone position
+                // At 100%, each shell's near edge should just touch O (apex of cone)
+                // so the shell centre sits at x = r (radius), back edge at x = 0
+                for (let i = 0; i < shells.length; i++) {
+                    const r = shellRadii[i];
+                    const timeOffset = r * tp; // at 100%: centre at r, back edge at O
+
+                    shells[i].position.x = timeOffset;
+                    shells[i].material.opacity = opac * (1 - tp * 0.3);
+                    shellWires[i].position.x = timeOffset;
+                    shellWires[i].material.opacity = 0.2 + tp * 0.1;
+                }
+
+                // Show/hide time axis
+                tAxisMat.opacity = tp * 0.6;
+                labelT.visible = tp > 0.05;
+                labelT.position.set(3.0 * tp + 0.5, 0.2, 0);
+
+                // Show/hide cone lines
+                for (let cl of coneLines) {
+                    cl.line.material.opacity = tp * 0.15;
+                    const pts = cl.line.geometry.attributes.position.array;
+                    const r = shellRadii[shellRadii.length - 1];
+                    const tOff = r * tp;
+                    pts[3] = tOff; // end x
+                    pts[4] = Math.cos(cl.angle) * r; // end y
+                    pts[5] = Math.sin(cl.angle) * r; // end z
+                    cl.line.geometry.attributes.position.needsUpdate = true;
+                }
+
+                // Pythagorean triangle
+                const isDegenerate = vel >= 0.999;
+                const showTri = vel > 0.01 && vel < 0.999 && tp > 0.1;
+                const showDegen = isDegenerate && tp > 0.1;
+
+                triMesh.visible = showTri;
+                triEdge.visible = showTri;
+                xMesh.visible = showTri || showDegen;
+                labelTx.visible = showTri;
+                labelSc.visible = showTri;
+                labelTobs.visible = showTri;
+                labelX.visible = showTri || showDegen;
+
+                // Degenerate limit: line along cone surface
+                degLine.visible = showDegen;
+                degGlow.visible = showDegen;
+                labelDegen.visible = showDegen;
+
+                if (showDegen) {
+                    const tObs = 1.5;
+                    const scale = tp;
+                    const endPt = new THREE.Vector3(0, tObs * scale, 0); // straight up along S (cone surface)
+
+                    // Update degenerate line endpoints
+                    const pts = degLine.geometry.attributes.position.array;
+                    pts[0] = 0; pts[1] = 0; pts[2] = 0;
+                    pts[3] = endPt.x; pts[4] = endPt.y; pts[5] = endPt.z;
+                    degLine.geometry.attributes.position.needsUpdate = true;
+                    degLineMat.opacity = 1.0;
+
+                    // Pulsing glow
+                    degTime += 0.03;
+                    const pulse = 0.3 + 0.7 * (0.5 + 0.5 * Math.sin(degTime * 3));
+                    const glowPts = degGlow.geometry.attributes.position.array;
+                    glowPts[0] = 0.01; glowPts[1] = 0; glowPts[2] = 0.01;
+                    glowPts[3] = endPt.x + 0.01; glowPts[4] = endPt.y; glowPts[5] = endPt.z + 0.01;
+                    degGlow.geometry.attributes.position.needsUpdate = true;
+                    degGlowMat.opacity = pulse * 0.6;
+
+                    // Body X at end of line
+                    xMesh.position.copy(endPt);
+                    xMat.color.setHex(0xff4444);
+                    labelX.position.set(endPt.x + 0.2, endPt.y + 0.15, endPt.z);
+
+                    // Labels
+                    labelDegen.position.set(0.4, tObs * scale * 0.5, 0);
+                } else {
+                    degLineMat.opacity = 0;
+                    degGlowMat.opacity = 0;
+                    xMat.color.setHex(0xe74c3c);
+
+                    // Fade annotation near the limit (v > 0.9)
+                    const nearLimit = vel > 0.9 && tp > 0.1;
+                    const fadeIn = nearLimit ? (vel - 0.9) / 0.099 : 0;
+                    if (nearLimit) {
+                    }
+                }
+
+                if (showTri) {
+                    const tObs = 1.5;
+                    const scVal = vel * tObs;
+                    const txVal = tObs * Math.sqrt(1 - vel * vel);
+                    const scale = tp;
+
+                    const A = new THREE.Vector3(0, 0, 0);
+                    const B = new THREE.Vector3(txVal * scale, 0, 0);
+                    const C = new THREE.Vector3(txVal * scale, scVal * scale, 0);
+
+                    const vertices = new Float32Array([
+                        A.x, A.y, A.z, B.x, B.y, B.z, C.x, C.y, C.z
+                    ]);
+                    triGeo.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+                    triGeo.computeVertexNormals();
+
+                    const edgePts = [A, B, C, A];
+                    triEdgeGeo.setFromPoints(edgePts);
+
+                    xMesh.position.copy(C);
+
+                    const midAB = new THREE.Vector3().addVectors(A, B).multiplyScalar(0.5);
+                    labelTx.position.set(midAB.x, midAB.y - 0.2, midAB.z);
+                    const midBC = new THREE.Vector3().addVectors(B, C).multiplyScalar(0.5);
+                    labelSc.position.set(midBC.x + 0.25, midBC.y, midBC.z);
+                    const midAC = new THREE.Vector3().addVectors(A, C).multiplyScalar(0.5);
+                    labelTobs.position.set(midAC.x - 0.2, midAC.y + 0.15, midAC.z);
+                    labelX.position.set(C.x + 0.2, C.y + 0.15, C.z);
+                }
+
+                // Fixed labels
+                labelO.position.set(-0.2, -0.2, 0);
+                labelS.position.set(0, 3.2, 0);
+                labelNS.position.set(0, -3.2, 0);
+            }
+
+            // Event listeners
+            tpSlider.addEventListener('input', updateScene);
+            velSlider.addEventListener('input', updateScene);
+            opacSlider.addEventListener('input', updateScene);
+
+            // Animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+                controls.update();
+                updateScene();
+                renderer.render(scene, camera);
+            }
+
+            // Handle resize
+            window.addEventListener('resize', () => {
+                const w = container.clientWidth;
+                const h = container.clientHeight;
+                camera.aspect = w / h;
+                camera.updateProjectionMatrix();
+                renderer.setSize(w, h);
+            });
+
+            updateScene();
+            animate();
+        })();
+
+        // Initialize
+        updateTimeDialation();
+        drawCone();
+        updateTimeDilationAtScale();
+        // drawSphereScene removed - handled by Three.js IIFE
+  }
+})();
+
 </script>
 
 </section>
