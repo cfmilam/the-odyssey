@@ -1853,6 +1853,1233 @@ And that is how Goodness is foiled.' ■</p></div>
 
 <!-- page 149 -->
 
+<!-- Interactive Explorations Section -->
+<section id="interactive" style="margin-top: 3rem; padding-top: 2rem; border-top: 2px solid var(--accent);">
+
+<h1>Interactive Explorations</h1>
+
+<div style="text-align: center; margin-bottom: 2rem; font-style: italic; color: var(--accent);">
+"If you accept that every 186,000 miles of space is equal to a second of time, then combining these length and time measures in the way one naturally does in describing the motion of a body produces a composite space-time result which is indistinguishable from that described by Einstein." — Viv Pope
+</div>
+
+<!-- 1. Space-Time Triangle Interactive -->
+<h2 id="interactive-triangle">The Space-Time Triangle</h2>
+<p>This is the heart of Pope's geometric approach to relativity. Drag the velocity slider to see how proper time (tP), relative time (tR), and distance (s/c) form a Pythagorean relationship. The triangle makes the space-time geometry visually obvious.</p>
+
+<div style="background: var(--surface); padding: 1.5rem; border-radius: 8px; margin: 1rem 0;">
+  <canvas id="triangle-canvas" width="600" height="400" style="width: 100%; max-width: 600px; height: auto; background: var(--bg); border-radius: 4px;"></canvas>
+  
+  <div style="margin-top: 1rem;">
+    <label for="velocity-slider" style="display: block; margin-bottom: 0.5rem;">Velocity (v/c): <span id="velocity-display">0.00</span></label>
+    <input type="range" id="velocity-slider" min="0" max="0.99" step="0.01" value="0" style="width: 100%; margin-bottom: 1rem;">
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.5rem; font-family: monospace; font-size: 0.9rem;">
+      <div>Proper Time (tP): <span id="tp-value">1.00</span> s</div>
+      <div>Relative Time (tR): <span id="tr-value">1.00</span> s</div>
+      <div>Distance (s/c): <span id="sc-value">0.00</span> s</div>
+    </div>
+  </div>
+</div>
+
+<div class="equation">\[t_R = \sqrt{\left(\frac{s}{c}\right)^2 + t_P^2}\]</div>
+
+<!-- 2. Clock Non-Paradox Interactive -->
+<h2 id="interactive-clocks">The Clock Non-Paradox</h2>
+<p>Watch two observers A and B where B travels away and returns. Due to the finite speed of light and asymmetric Doppler effects, they count different numbers of ticks. There's no paradox—just asymmetric observation.</p>
+
+<div style="background: var(--surface); padding: 1.5rem; border-radius: 8px; margin: 1rem 0;">
+  <canvas id="clocks-canvas" width="700" height="300" style="width: 100%; max-width: 700px; height: auto; background: var(--bg); border-radius: 4px;"></canvas>
+  
+  <div style="margin-top: 1rem;">
+    <button id="start-clocks" style="background: var(--accent); color: var(--bg); border: none; padding: 0.5rem 1rem; border-radius: 4px; margin-right: 0.5rem;">Start Journey</button>
+    <button id="reset-clocks" style="background: var(--border); color: var(--fg); border: none; padding: 0.5rem 1rem; border-radius: 4px;">Reset</button>
+    
+    <div style="margin-top: 1rem;">
+      <label for="journey-speed">B's Speed (v/c): <span id="speed-display">0.60</span></label>
+      <input type="range" id="journey-speed" min="0.1" max="0.9" step="0.1" value="0.6" style="width: 100%; margin: 0.5rem 0;">
+      
+      <label for="turnaround-time">Turnaround Time: <span id="turnaround-display">5.0</span> s</label>
+      <input type="range" id="turnaround-time" min="2" max="10" step="0.5" value="5" style="width: 100%;">
+    </div>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; font-family: monospace;">
+      <div>
+        <strong>Observer A (stays):</strong><br>
+        Total ticks counted: <span id="a-total-ticks">0</span><br>
+        Slow ticks from B: <span id="a-slow-ticks">0</span><br>
+        Fast ticks from B: <span id="a-fast-ticks">0</span>
+      </div>
+      <div>
+        <strong>Observer B (travels):</strong><br>
+        Total ticks counted: <span id="b-total-ticks">0</span><br>
+        Slow ticks from A: <span id="b-slow-ticks">0</span><br>
+        Fast ticks from A: <span id="b-fast-ticks">0</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 3. The Cone Model Interactive -->
+<h2 id="interactive-cone">The Cone Model</h2>
+<p>This 3D cone unifies Newtonian and Einsteinian perspectives. The Newtonian view (infinite speeds possible) and Einsteinian view (speeds limited to c) are just different projections of the same geometric structure.</p>
+
+<div style="background: var(--surface); padding: 1.5rem; border-radius: 8px; margin: 1rem 0;">
+  <canvas id="cone-canvas" width="600" height="500" style="width: 100%; max-width: 600px; height: auto; background: var(--bg); border-radius: 4px;"></canvas>
+  
+  <div style="margin-top: 1rem;">
+    <label for="cone-rotation">Rotate Cone: <span id="rotation-display">0°</span></label>
+    <input type="range" id="cone-rotation" min="0" max="360" step="5" value="45" style="width: 100%; margin-bottom: 1rem;">
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; font-size: 0.9rem;">
+      <div>
+        <strong>Newtonian View:</strong><br>
+        Velocities can reach infinity<br>
+        Time flows absolutely
+      </div>
+      <div>
+        <strong>Einsteinian View:</strong><br>
+        Velocities limited to c<br>
+        Time dilates with motion
+      </div>
+      <div>
+        <strong>Pope's Insight:</strong><br>
+        Same geometry, different projections<br>
+        c is a conversion factor, not speed
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 4. Mass-Energy Interconversion -->
+<h2 id="interactive-mass-energy">Mass-Energy from Angular Momentum</h2>
+<p>See how E = mc² emerges naturally from Pope's angular momentum approach. As velocity increases, the energy approaches the famous limit, but without invoking mysterious "forces".</p>
+
+<div style="background: var(--surface); padding: 1.5rem; border-radius: 8px; margin: 1rem 0;">
+  <canvas id="energy-canvas" width="600" height="400" style="width: 100%; max-width: 600px; height: auto; background: var(--bg); border-radius: 4px;"></canvas>
+  
+  <div style="margin-top: 1rem;">
+    <label for="mass-velocity">Velocity (v/c): <span id="mass-v-display">0.00</span></label>
+    <input type="range" id="mass-velocity" min="0" max="0.99" step="0.01" value="0" style="width: 100%; margin-bottom: 1rem;">
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.5rem; font-family: monospace; font-size: 0.9rem;">
+      <div>Rest Mass (m): <span id="rest-mass">1.00</span> kg</div>
+      <div>Relativistic Mass: <span id="rel-mass">1.00</span> kg</div>
+      <div>Kinetic Energy: <span id="kinetic-energy">0.00</span> mc²</div>
+      <div>Total Energy: <span id="total-energy">1.00</span> mc²</div>
+    </div>
+  </div>
+</div>
+
+<div class="equation">\[E = mc^2 \left(1 - \frac{t_P^2}{t_R^2}\right)\]</div>
+
+<!-- 5. Balmer Series from Einstein -->
+<h2 id="interactive-balmer">Balmer Series from Relativity</h2>
+<p>Click on energy level transitions to see how Pope derives the hydrogen spectrum directly from Einstein's time dilation formula—no quantum mechanics required, just angular momentum quantization.</p>
+
+<div style="background: var(--surface); padding: 1.5rem; border-radius: 8px; margin: 1rem 0;">
+  <canvas id="balmer-canvas" width="700" height="500" style="width: 100%; max-width: 700px; height: auto; background: var(--bg); border-radius: 4px;"></canvas>
+  
+  <div style="margin-top: 1rem;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+      <div>
+        <strong>Energy Levels (n):</strong><br>
+        <button class="energy-level" data-n="1" style="background: var(--accent); color: var(--bg); margin: 0.2rem; padding: 0.3rem 0.6rem; border: none; border-radius: 3px;">n=1</button>
+        <button class="energy-level" data-n="2" style="background: var(--accent); color: var(--bg); margin: 0.2rem; padding: 0.3rem 0.6rem; border: none; border-radius: 3px;">n=2</button>
+        <button class="energy-level" data-n="3" style="background: var(--accent); color: var(--bg); margin: 0.2rem; padding: 0.3rem 0.6rem; border: none; border-radius: 3px;">n=3</button>
+        <button class="energy-level" data-n="4" style="background: var(--accent); color: var(--bg); margin: 0.2rem; padding: 0.3rem 0.6rem; border: none; border-radius: 3px;">n=4</button>
+        <button class="energy-level" data-n="5" style="background: var(--accent); color: var(--bg); margin: 0.2rem; padding: 0.3rem 0.6rem; border: none; border-radius: 3px;">n=5</button>
+      </div>
+      <div>
+        <strong>Selected Transition:</strong><br>
+        <span id="transition-info">Click energy levels to see transitions</span><br>
+        <div id="spectral-line" style="height: 20px; margin: 0.5rem 0; border-radius: 3px;"></div>
+        Wavelength: <span id="wavelength-display">— nm</span><br>
+        Frequency: <span id="frequency-display">— Hz</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="equation">\[\nu = N^2 cR\left[\frac{1}{n_1^2} - \frac{1}{n_2^2}\right]\]</div>
+
+<!-- 6. Gravitational vs Angular Momentum -->
+<h2 id="interactive-gravity">Gravitational Force from Angular Momentum</h2>
+<p>Compare Newton's mysterious "force at a distance" with Pope's angular momentum approach. Input masses and see how both give identical results, but Pope's requires no spooky action.</p>
+
+<div style="background: var(--surface); padding: 1.5rem; border-radius: 8px; margin: 1rem 0;">
+  <canvas id="gravity-canvas" width="600" height="400" style="width: 100%; max-width: 600px; height: auto; background: var(--bg); border-radius: 4px;"></canvas>
+  
+  <div style="margin-top: 1rem;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+      <div>
+        <label for="mass1">Mass 1 (kg): <span id="mass1-display">1.0e24</span></label>
+        <input type="range" id="mass1" min="20" max="30" step="0.1" value="24" style="width: 100%;">
+      </div>
+      <div>
+        <label for="mass2">Mass 2 (kg): <span id="mass2-display">1.0e3</span></label>
+        <input type="range" id="mass2" min="1" max="10" step="0.1" value="3" style="width: 100%;">
+      </div>
+      <div>
+        <label for="distance">Distance (m): <span id="distance-display">1.0e6</span></label>
+        <input type="range" id="distance" min="4" max="8" step="0.1" value="6" style="width: 100%;">
+      </div>
+    </div>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; font-family: monospace; font-size: 0.9rem;">
+      <div>
+        <strong>Newton's Approach:</strong><br>
+        F = G × m₁ × m₂ / r²<br>
+        Force: <span id="newton-force">0.00</span> N<br>
+        <em>(Mysterious action at distance)</em>
+      </div>
+      <div>
+        <strong>Pope's Approach:</strong><br>
+        F from angular momentum<br>
+        Force: <span id="pope-force">0.00</span> N<br>
+        <em>(Direct geometric relationship)</em>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 7. Quantization from Angular Momentum -->
+<h2 id="interactive-quantum">Planck's Quantum from Angular Momentum</h2>
+<p>See how the famous Planck constant ℏ emerges naturally from angular momentum quantization, without invoking mysterious quantum mechanics.</p>
+
+<div style="background: var(--surface); padding: 1.5rem; border-radius: 8px; margin: 1rem 0;">
+  <canvas id="quantum-canvas" width="600" height="400" style="width: 100%; max-width: 600px; height: auto; background: var(--bg); border-radius: 4px;"></canvas>
+  
+  <div style="margin-top: 1rem;">
+    <label for="quantum-level">Quantum Number (n): <span id="quantum-n-display">1</span></label>
+    <input type="range" id="quantum-level" min="1" max="10" step="1" value="1" style="width: 100%; margin-bottom: 1rem;">
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.5rem; font-family: monospace; font-size: 0.9rem;">
+      <div>Angular Momentum: <span id="angular-momentum">1.00</span> ℏ</div>
+      <div>Energy Level: <span id="energy-level">-13.6</span> eV</div>
+      <div>Orbital Radius: <span id="orbital-radius">0.53</span> Å</div>
+      <div>Frequency: <span id="quantum-frequency">3.29e15</span> Hz</div>
+    </div>
+    
+    <div style="margin-top: 1rem; padding: 1rem; background: var(--fn-bg); border-radius: 4px; font-size: 0.9rem;">
+      <strong>Pope's Insight:</strong> Planck's constant ℏ is simply the quantum of angular momentum J = nℏ. 
+      Energy quantization emerges naturally from the geometric constraints of space-time, 
+      not from mysterious "wave-particle duality."
+    </div>
+  </div>
+</div>
+
+<div class="equation">\[J = n\hbar \quad \text{where} \quad \hbar = \frac{h}{2\pi}\]</div>
+
+<!-- JavaScript for all interactives -->
+<script>
+// Utility functions
+function getCanvasContext(id) {
+  const canvas = document.getElementById(id);
+  const ctx = canvas.getContext('2d');
+  // Set proper canvas size for high DPI
+  const rect = canvas.getBoundingClientRect();
+  const scale = window.devicePixelRatio || 1;
+  canvas.width = rect.width * scale;
+  canvas.height = rect.height * scale;
+  ctx.scale(scale, scale);
+  return { canvas, ctx, width: rect.width, height: rect.height };
+}
+
+function getComputedColor(varName) {
+  return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+}
+
+// 1. Space-Time Triangle Interactive
+function initTriangleInteractive() {
+  const velocitySlider = document.getElementById('velocity-slider');
+  const velocityDisplay = document.getElementById('velocity-display');
+  const tpValue = document.getElementById('tp-value');
+  const trValue = document.getElementById('tr-value');
+  const scValue = document.getElementById('sc-value');
+  
+  function drawTriangle() {
+    const { ctx, width, height } = getCanvasContext('triangle-canvas');
+    const v = parseFloat(velocitySlider.value);
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, width, height);
+    
+    // Colors
+    const fg = getComputedColor('--fg');
+    const accent = getComputedColor('--accent');
+    const accent2 = getComputedColor('--accent2');
+    
+    // Calculate values
+    const tp = 1.0; // proper time (fixed)
+    const sc = v; // distance/c
+    const tr = Math.sqrt(sc * sc + tp * tp);
+    
+    // Update displays
+    velocityDisplay.textContent = v.toFixed(2);
+    tpValue.textContent = tp.toFixed(2);
+    trValue.textContent = tr.toFixed(2);
+    scValue.textContent = sc.toFixed(2);
+    
+    // Draw triangle
+    const scale = Math.min(width, height) * 0.3;
+    const centerX = width / 2;
+    const centerY = height / 2 + 30;
+    
+    // Triangle vertices
+    const x1 = centerX - tp * scale / 2; // bottom left
+    const y1 = centerY;
+    const x2 = centerX + tp * scale / 2; // bottom right  
+    const y2 = centerY;
+    const x3 = centerX + tp * scale / 2; // top right
+    const y3 = centerY - sc * scale;
+    
+    // Draw triangle
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.lineTo(x3, y3);
+    ctx.lineTo(x1, y1);
+    ctx.stroke();
+    
+    // Draw hypotenuse (tr)
+    ctx.strokeStyle = accent2;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x3, y3);
+    ctx.stroke();
+    
+    // Labels
+    ctx.fillStyle = fg;
+    ctx.font = '14px Georgia';
+    ctx.textAlign = 'center';
+    
+    // Proper time (horizontal)
+    ctx.fillText(`tP = ${tp.toFixed(2)}s`, (x1 + x2) / 2, y1 + 20);
+    
+    // Distance/c (vertical)
+    ctx.save();
+    ctx.translate(x2 + 20, (y2 + y3) / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText(`s/c = ${sc.toFixed(2)}s`, 0, 0);
+    ctx.restore();
+    
+    // Relative time (hypotenuse)
+    const midX = (x1 + x3) / 2 - 30;
+    const midY = (y1 + y3) / 2;
+    ctx.fillText(`tR = ${tr.toFixed(2)}s`, midX, midY);
+    
+    // Right angle indicator
+    if (v > 0.05) {
+      const size = 15;
+      ctx.strokeStyle = fg;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x2 - size, y2);
+      ctx.lineTo(x2 - size, y2 - size);
+      ctx.lineTo(x2, y2 - size);
+      ctx.stroke();
+    }
+    
+    // Title and formula
+    ctx.fillStyle = accent;
+    ctx.font = 'bold 16px Georgia';
+    ctx.textAlign = 'center';
+    ctx.fillText('The Space-Time Pythagorean Triangle', width / 2, 30);
+    
+    ctx.fillStyle = fg;
+    ctx.font = '12px Georgia';
+    ctx.fillText('tR² = (s/c)² + tP²', width / 2, height - 20);
+  }
+  
+  velocitySlider.addEventListener('input', drawTriangle);
+  drawTriangle();
+}
+
+// 2. Clock Non-Paradox Interactive  
+function initClocksInteractive() {
+  const startBtn = document.getElementById('start-clocks');
+  const resetBtn = document.getElementById('reset-clocks');
+  const speedSlider = document.getElementById('journey-speed');
+  const turnaroundSlider = document.getElementById('turnaround-time');
+  const speedDisplay = document.getElementById('speed-display');
+  const turnaroundDisplay = document.getElementById('turnaround-display');
+  
+  let animationId = null;
+  let isRunning = false;
+  let currentTime = 0;
+  let speed = 0.6;
+  let turnaroundTime = 5.0;
+  
+  function updateControls() {
+    speed = parseFloat(speedSlider.value);
+    turnaroundTime = parseFloat(turnaroundSlider.value);
+    speedDisplay.textContent = speed.toFixed(1);
+    turnaroundDisplay.textContent = turnaroundTime.toFixed(1);
+  }
+  
+  function resetSimulation() {
+    if (animationId) {
+      cancelAnimationFrame(animationId);
+      animationId = null;
+    }
+    isRunning = false;
+    currentTime = 0;
+    
+    // Reset tick counters
+    document.getElementById('a-total-ticks').textContent = '0';
+    document.getElementById('b-total-ticks').textContent = '0';
+    document.getElementById('a-slow-ticks').textContent = '0';
+    document.getElementById('a-fast-ticks').textContent = '0';
+    document.getElementById('b-slow-ticks').textContent = '0';
+    document.getElementById('b-fast-ticks').textContent = '0';
+    
+    startBtn.textContent = 'Start Journey';
+    drawClocks();
+  }
+  
+  function drawClocks() {
+    const { ctx, width, height } = getCanvasContext('clocks-canvas');
+    ctx.clearRect(0, 0, width, height);
+    
+    const fg = getComputedColor('--fg');
+    const accent = getComputedColor('--accent');
+    const accent2 = getComputedColor('--accent2');
+    
+    // Calculate positions
+    const journeyTime = turnaroundTime * 2; // total journey time
+    const maxDistance = speed * turnaroundTime; // max separation
+    
+    let bPosition = 0;
+    let phase = 'outbound';
+    
+    if (isRunning && currentTime <= journeyTime) {
+      if (currentTime <= turnaroundTime) {
+        // Outbound phase
+        bPosition = speed * currentTime;
+        phase = 'outbound';
+      } else {
+        // Return phase
+        const returnTime = currentTime - turnaroundTime;
+        bPosition = maxDistance - speed * returnTime;
+        phase = 'return';
+      }
+    }
+    
+    // Draw timeline
+    const timelineY = height / 2;
+    const centerX = width / 2;
+    const scale = (width * 0.8) / (maxDistance * 2.2);
+    
+    ctx.strokeStyle = fg;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(50, timelineY);
+    ctx.lineTo(width - 50, timelineY);
+    ctx.stroke();
+    
+    // Observer A (stays at center)
+    const aX = centerX;
+    ctx.fillStyle = accent;
+    ctx.beginPath();
+    ctx.arc(aX, timelineY, 8, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.fillStyle = fg;
+    ctx.font = 'bold 14px Georgia';
+    ctx.textAlign = 'center';
+    ctx.fillText('A', aX, timelineY - 15);
+    
+    // Observer B (travels)
+    const bX = centerX + bPosition * scale;
+    ctx.fillStyle = accent2;
+    ctx.beginPath();
+    ctx.arc(bX, timelineY, 8, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.fillStyle = fg;
+    ctx.fillText('B', bX, timelineY - 15);
+    
+    // Show light signals
+    if (isRunning) {
+      // Simplified tick counting display
+      const totalTime = currentTime;
+      const dopplerFactor = Math.sqrt((1 - speed) / (1 + speed)); // approaching
+      const slowFactor = Math.sqrt((1 + speed) / (1 - speed)); // receding
+      
+      let aSlowTicks = 0;
+      let aFastTicks = 0;
+      let bSlowTicks = 0; 
+      let bFastTicks = 0;
+      
+      if (phase === 'outbound') {
+        // A sees B's slowed ticks
+        aSlowTicks = Math.floor(totalTime * slowFactor);
+        // B sees A's slowed ticks
+        bSlowTicks = Math.floor(totalTime * slowFactor);
+      } else {
+        // During return phase
+        const outboundTicks = Math.floor(turnaroundTime * slowFactor);
+        const returnTime = currentTime - turnaroundTime;
+        const returnTicks = Math.floor(returnTime * dopplerFactor);
+        
+        aSlowTicks = outboundTicks;
+        aFastTicks = returnTicks;
+        bSlowTicks = outboundTicks;
+        bFastTicks = returnTicks;
+      }
+      
+      const aTotalTicks = aSlowTicks + aFastTicks;
+      const bTotalTicks = bSlowTicks + bFastTicks;
+      
+      // Update displays
+      document.getElementById('a-total-ticks').textContent = aTotalTicks.toString();
+      document.getElementById('b-total-ticks').textContent = bTotalTicks.toString();
+      document.getElementById('a-slow-ticks').textContent = aSlowTicks.toString();
+      document.getElementById('a-fast-ticks').textContent = aFastTicks.toString();
+      document.getElementById('b-slow-ticks').textContent = bSlowTicks.toString();
+      document.getElementById('b-fast-ticks').textContent = bFastTicks.toString();
+    }
+    
+    // Draw trajectory
+    if (currentTime > 0) {
+      ctx.strokeStyle = accent2;
+      ctx.lineWidth = 2;
+      ctx.setLineDash([2, 2]);
+      ctx.beginPath();
+      ctx.moveTo(centerX, timelineY + 20);
+      
+      const maxX = centerX + maxDistance * scale;
+      ctx.lineTo(maxX, timelineY + 20);
+      if (currentTime > turnaroundTime) {
+        ctx.lineTo(centerX, timelineY + 20);
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    
+    // Labels and info
+    ctx.fillStyle = accent;
+    ctx.font = 'bold 16px Georgia';
+    ctx.textAlign = 'center';
+    ctx.fillText('Clock Non-Paradox: Asymmetric Doppler Effect', width / 2, 30);
+    
+    ctx.fillStyle = fg;
+    ctx.font = '12px Georgia';
+    ctx.fillText(`Time: ${currentTime.toFixed(1)}s | Phase: ${phase} | Speed: ${speed}c`, width / 2, height - 20);
+  }
+  
+  function animate() {
+    if (!isRunning) return;
+    
+    currentTime += 0.05;
+    drawClocks();
+    
+    if (currentTime < turnaroundTime * 2) {
+      animationId = requestAnimationFrame(animate);
+    } else {
+      isRunning = false;
+      startBtn.textContent = 'Start Journey';
+    }
+  }
+  
+  startBtn.addEventListener('click', () => {
+    if (!isRunning) {
+      isRunning = true;
+      currentTime = 0;
+      startBtn.textContent = 'Running...';
+      animate();
+    }
+  });
+  
+  resetBtn.addEventListener('click', resetSimulation);
+  speedSlider.addEventListener('input', updateControls);
+  turnaroundSlider.addEventListener('input', updateControls);
+  
+  updateControls();
+  drawClocks();
+}
+
+// 3. Cone Model Interactive
+function initConeInteractive() {
+  const rotationSlider = document.getElementById('cone-rotation');
+  const rotationDisplay = document.getElementById('rotation-display');
+  
+  function drawCone() {
+    const { ctx, width, height } = getCanvasContext('cone-canvas');
+    ctx.clearRect(0, 0, width, height);
+    
+    const fg = getComputedColor('--fg');
+    const accent = getComputedColor('--accent');
+    const accent2 = getComputedColor('--accent2');
+    
+    const rotation = parseFloat(rotationSlider.value) * Math.PI / 180;
+    rotationDisplay.textContent = Math.round(parseFloat(rotationSlider.value)) + '°';
+    
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const coneHeight = height * 0.3;
+    const coneRadius = width * 0.2;
+    
+    // 3D cone vertices (simplified isometric projection)
+    const vertices = [];
+    const segments = 20;
+    
+    // Top vertex
+    vertices.push([0, -coneHeight, 0]);
+    
+    // Base circle
+    for (let i = 0; i < segments; i++) {
+      const angle = (i / segments) * 2 * Math.PI;
+      const x = coneRadius * Math.cos(angle);
+      const z = coneRadius * Math.sin(angle);
+      vertices.push([x, 0, z]);
+    }
+    
+    // Rotate and project vertices
+    const projectedVertices = vertices.map(([x, y, z]) => {
+      // Simple rotation around Y axis
+      const rotX = x * Math.cos(rotation) + z * Math.sin(rotation);
+      const rotZ = -x * Math.sin(rotation) + z * Math.cos(rotation);
+      
+      // Isometric projection
+      const screenX = centerX + rotX - rotZ * 0.5;
+      const screenY = centerY + y + rotZ * 0.3;
+      
+      return [screenX, screenY, rotZ]; // include Z for depth sorting
+    });
+    
+    // Draw cone base
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let i = 1; i < segments + 1; i++) {
+      const [x, y] = projectedVertices[i];
+      if (i === 1) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.stroke();
+    
+    // Draw cone sides (only visible ones)
+    ctx.strokeStyle = accent2;
+    for (let i = 1; i < segments + 1; i += 4) {
+      const [topX, topY] = projectedVertices[0];
+      const [baseX, baseY] = projectedVertices[i];
+      
+      ctx.beginPath();
+      ctx.moveTo(topX, topY);
+      ctx.lineTo(baseX, baseY);
+      ctx.stroke();
+    }
+    
+    // Draw the space-time triangle on the cone surface
+    const triangleScale = 0.3;
+    const [topX, topY] = projectedVertices[0];
+    const triangleBaseX = centerX + coneRadius * triangleScale * Math.cos(rotation);
+    const triangleBaseY = centerY + coneRadius * triangleScale * 0.3;
+    
+    ctx.strokeStyle = '#ff6b6b';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(topX, topY);
+    ctx.lineTo(triangleBaseX, triangleBaseY);
+    ctx.lineTo(centerX, centerY);
+    ctx.lineTo(topX, topY);
+    ctx.stroke();
+    
+    // Labels
+    ctx.fillStyle = fg;
+    ctx.font = '12px Georgia';
+    ctx.textAlign = 'center';
+    
+    // Newtonian projection (when looking from side)
+    if (Math.abs(rotation) < 0.5 || Math.abs(rotation - Math.PI) < 0.5) {
+      ctx.fillText('Newtonian View: Infinite Velocities', width * 0.2, height - 60);
+    }
+    
+    // Einsteinian projection (when looking from front)
+    if (Math.abs(rotation - Math.PI/2) < 0.5 || Math.abs(rotation - 3*Math.PI/2) < 0.5) {
+      ctx.fillText('Einsteinian View: Velocities → c', width * 0.8, height - 60);
+    }
+    
+    ctx.fillStyle = accent;
+    ctx.font = 'bold 16px Georgia';
+    ctx.fillText('The Cone Model: Unifying Perspectives', width / 2, 30);
+    
+    ctx.fillStyle = fg;
+    ctx.font = '10px Georgia';
+    ctx.fillText('Red triangle shows the Pythagorean relationship on the cone surface', width / 2, height - 20);
+  }
+  
+  rotationSlider.addEventListener('input', drawCone);
+  drawCone();
+}
+
+// 4. Mass-Energy Interactive
+function initMassEnergyInteractive() {
+  const velocitySlider = document.getElementById('mass-velocity');
+  const velocityDisplay = document.getElementById('mass-v-display');
+  const restMassDisplay = document.getElementById('rest-mass');
+  const relMassDisplay = document.getElementById('rel-mass');
+  const kineticEnergyDisplay = document.getElementById('kinetic-energy');
+  const totalEnergyDisplay = document.getElementById('total-energy');
+  
+  function updateMassEnergy() {
+    const v = parseFloat(velocitySlider.value);
+    const m0 = 1.0; // rest mass
+    
+    // Relativistic calculations
+    const gamma = 1 / Math.sqrt(1 - v * v);
+    const relativistic_mass = m0 * gamma;
+    const kinetic_energy = (gamma - 1) * m0; // in units of mc²
+    const total_energy = gamma * m0;
+    
+    // Update displays
+    velocityDisplay.textContent = v.toFixed(2);
+    restMassDisplay.textContent = m0.toFixed(2);
+    relMassDisplay.textContent = relativistic_mass.toFixed(2);
+    kineticEnergyDisplay.textContent = kinetic_energy.toFixed(2);
+    totalEnergyDisplay.textContent = total_energy.toFixed(2);
+    
+    // Draw graph
+    const { ctx, width, height } = getCanvasContext('energy-canvas');
+    ctx.clearRect(0, 0, width, height);
+    
+    const fg = getComputedColor('--fg');
+    const accent = getComputedColor('--accent');
+    const accent2 = getComputedColor('--accent2');
+    
+    // Draw axes
+    const marginX = 80;
+    const marginY = 60;
+    const graphWidth = width - 2 * marginX;
+    const graphHeight = height - 2 * marginY;
+    
+    ctx.strokeStyle = fg;
+    ctx.lineWidth = 1;
+    
+    // X axis (velocity)
+    ctx.beginPath();
+    ctx.moveTo(marginX, height - marginY);
+    ctx.lineTo(width - marginX, height - marginY);
+    ctx.stroke();
+    
+    // Y axis (energy)
+    ctx.beginPath();
+    ctx.moveTo(marginX, marginY);
+    ctx.lineTo(marginX, height - marginY);
+    ctx.stroke();
+    
+    // Draw energy curves
+    ctx.lineWidth = 2;
+    
+    // Total energy curve
+    ctx.strokeStyle = accent;
+    ctx.beginPath();
+    for (let i = 0; i <= 100; i++) {
+      const vel = i * 0.99 / 100;
+      const gammaVal = 1 / Math.sqrt(1 - vel * vel);
+      const x = marginX + (vel / 0.99) * graphWidth;
+      const y = height - marginY - (gammaVal / 10) * graphHeight; // scale by 10
+      
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    
+    // Kinetic energy curve
+    ctx.strokeStyle = accent2;
+    ctx.beginPath();
+    for (let i = 0; i <= 100; i++) {
+      const vel = i * 0.99 / 100;
+      const gammaVal = 1 / Math.sqrt(1 - vel * vel);
+      const kineticVal = gammaVal - 1;
+      const x = marginX + (vel / 0.99) * graphWidth;
+      const y = height - marginY - (kineticVal / 10) * graphHeight;
+      
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    
+    // Current velocity line
+    ctx.strokeStyle = '#ff6b6b';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 5]);
+    const currentX = marginX + (v / 0.99) * graphWidth;
+    ctx.beginPath();
+    ctx.moveTo(currentX, marginY);
+    ctx.lineTo(currentX, height - marginY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    
+    // Current point
+    ctx.fillStyle = '#ff6b6b';
+    ctx.beginPath();
+    const currentY = height - marginY - (gamma / 10) * graphHeight;
+    ctx.arc(currentX, currentY, 5, 0, 2 * Math.PI);
+    ctx.fill();
+    
+    // Labels
+    ctx.fillStyle = fg;
+    ctx.font = '12px Georgia';
+    ctx.textAlign = 'center';
+    
+    // Axis labels
+    ctx.fillText('Velocity (v/c)', width / 2, height - 20);
+    ctx.save();
+    ctx.translate(20, height / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText('Energy (mc²)', 0, 0);
+    ctx.restore();
+    
+    // Legend
+    ctx.textAlign = 'left';
+    ctx.fillStyle = accent;
+    ctx.fillText('Total Energy E = γmc²', marginX, 40);
+    ctx.fillStyle = accent2;
+    ctx.fillText('Kinetic Energy = (γ-1)mc²', marginX, 60);
+    
+    // Title
+    ctx.fillStyle = accent;
+    ctx.font = 'bold 16px Georgia';
+    ctx.textAlign = 'center';
+    ctx.fillText('Mass-Energy from Angular Momentum', width / 2, 25);
+  }
+  
+  velocitySlider.addEventListener('input', updateMassEnergy);
+  updateMassEnergy();
+}
+
+// 5. Balmer Series Interactive  
+function initBalmerInteractive() {
+  const energyLevelBtns = document.querySelectorAll('.energy-level');
+  const transitionInfo = document.getElementById('transition-info');
+  const spectralLine = document.getElementById('spectral-line');
+  const wavelengthDisplay = document.getElementById('wavelength-display');
+  const frequencyDisplay = document.getElementById('frequency-display');
+  
+  let selectedLevels = [];
+  const R = 1.097e7; // Rydberg constant (m⁻¹)
+  const c = 3e8; // speed of light
+  
+  function updateTransition() {
+    const { ctx, width, height } = getCanvasContext('balmer-canvas');
+    ctx.clearRect(0, 0, width, height);
+    
+    const fg = getComputedColor('--fg');
+    const accent = getComputedColor('--accent');
+    const accent2 = getComputedColor('--accent2');
+    
+    // Draw energy level diagram
+    const leftX = 50;
+    const rightX = width - 300;
+    const levels = [1, 2, 3, 4, 5];
+    const levelHeight = (height - 100) / 6;
+    
+    // Draw levels
+    levels.forEach((n, i) => {
+      const y = height - 50 - i * levelHeight;
+      const energy = -13.6 / (n * n); // eV
+      
+      ctx.strokeStyle = fg;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(leftX, y);
+      ctx.lineTo(rightX, y);
+      ctx.stroke();
+      
+      // Level labels
+      ctx.fillStyle = fg;
+      ctx.font = '12px Georgia';
+      ctx.textAlign = 'left';
+      ctx.fillText(`n=${n}`, leftX - 30, y + 4);
+      ctx.textAlign = 'right';
+      ctx.fillText(`${energy.toFixed(1)} eV`, rightX + 80, y + 4);
+    });
+    
+    // Draw spectrum on the right
+    const spectrumX = rightX + 100;
+    const spectrumWidth = 150;
+    const spectrumY = height - 200;
+    const spectrumHeight = 30;
+    
+    // Draw visible spectrum background
+    const gradient = ctx.createLinearGradient(spectrumX, 0, spectrumX + spectrumWidth, 0);
+    gradient.addColorStop(0, '#ff0000'); // red
+    gradient.addColorStop(0.5, '#00ff00'); // green  
+    gradient.addColorStop(1, '#0000ff'); // blue
+    
+    ctx.fillStyle = gradient;
+    ctx.fillRect(spectrumX, spectrumY, spectrumWidth, spectrumHeight);
+    
+    // Draw transitions
+    if (selectedLevels.length === 2) {
+      const n1 = Math.min(...selectedLevels);
+      const n2 = Math.max(...selectedLevels);
+      
+      // Calculate wavelength using Balmer formula
+      const wavenumber = R * (1/(n1*n1) - 1/(n2*n2));
+      const wavelength = 1 / wavenumber; // meters
+      const wavelengthNm = wavelength * 1e9; // nanometers
+      const frequency = c / wavelength; // Hz
+      
+      // Draw transition arrow
+      const y1 = height - 50 - (n1 - 1) * levelHeight;
+      const y2 = height - 50 - (n2 - 1) * levelHeight;
+      
+      ctx.strokeStyle = '#ff6b6b';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(leftX + 20, y2);
+      ctx.lineTo(leftX + 20, y1);
+      ctx.stroke();
+      
+      // Arrow head
+      ctx.beginPath();
+      ctx.moveTo(leftX + 20, y1);
+      ctx.lineTo(leftX + 15, y1 + 10);
+      ctx.lineTo(leftX + 25, y1 + 10);
+      ctx.closePath();
+      ctx.fill();
+      
+      // Update displays
+      transitionInfo.textContent = `n=${n2} → n=${n1}`;
+      wavelengthDisplay.textContent = Math.round(wavelengthNm) + ' nm';
+      frequencyDisplay.textContent = frequency.toExponential(2) + ' Hz';
+      
+      // Color the spectral line
+      let color = '#ffffff';
+      if (wavelengthNm >= 400 && wavelengthNm <= 700) {
+        if (wavelengthNm < 450) color = '#8b00ff'; // violet
+        else if (wavelengthNm < 495) color = '#0000ff'; // blue  
+        else if (wavelengthNm < 570) color = '#00ff00'; // green
+        else if (wavelengthNm < 590) color = '#ffff00'; // yellow
+        else if (wavelengthNm < 620) color = '#ff7f00'; // orange
+        else color = '#ff0000'; // red
+      }
+      spectralLine.style.backgroundColor = color;
+      
+      // Draw line on spectrum
+      if (wavelengthNm >= 380 && wavelengthNm <= 750) {
+        const pos = (wavelengthNm - 380) / (750 - 380);
+        const lineX = spectrumX + pos * spectrumWidth;
+        
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(lineX, spectrumY - 5);
+        ctx.lineTo(lineX, spectrumY + spectrumHeight + 5);
+        ctx.stroke();
+      }
+    } else {
+      transitionInfo.textContent = 'Click energy levels to see transitions';
+      wavelengthDisplay.textContent = '— nm';
+      frequencyDisplay.textContent = '— Hz';
+      spectralLine.style.backgroundColor = 'transparent';
+    }
+    
+    // Labels
+    ctx.fillStyle = accent;
+    ctx.font = 'bold 16px Georgia';
+    ctx.textAlign = 'center';
+    ctx.fillText('Balmer Series from Einstein\'s Relativity', width / 2, 25);
+    
+    ctx.fillStyle = fg;
+    ctx.font = '12px Georgia';
+    ctx.textAlign = 'left';
+    ctx.fillText('Energy Levels', leftX, 50);
+    ctx.fillText('Visible Spectrum', spectrumX, spectrumY - 10);
+    
+    // Show Pope's derivation formula
+    ctx.textAlign = 'center';
+    ctx.font = '11px Georgia';
+    ctx.fillText('From Pope: ν = N²cR[(1/n₁²) - (1/n₂²)]', width / 2, height - 10);
+  }
+  
+  energyLevelBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const n = parseInt(btn.dataset.n);
+      
+      if (selectedLevels.includes(n)) {
+        selectedLevels = selectedLevels.filter(level => level !== n);
+        btn.style.opacity = '1';
+      } else {
+        if (selectedLevels.length >= 2) {
+          // Reset previous selections
+          energyLevelBtns.forEach(b => b.style.opacity = '1');
+          selectedLevels = [];
+        }
+        selectedLevels.push(n);
+        btn.style.opacity = '0.5';
+      }
+      
+      updateTransition();
+    });
+  });
+  
+  updateTransition();
+}
+
+// 6. Gravitational Force Interactive
+function initGravityInteractive() {
+  const mass1Slider = document.getElementById('mass1');
+  const mass2Slider = document.getElementById('mass2');
+  const distanceSlider = document.getElementById('distance');
+  const mass1Display = document.getElementById('mass1-display');
+  const mass2Display = document.getElementById('mass2-display');
+  const distanceDisplay = document.getElementById('distance-display');
+  const newtonForceDisplay = document.getElementById('newton-force');
+  const popeForceDisplay = document.getElementById('pope-force');
+  
+  const G = 6.673e-11; // gravitational constant
+  
+  function updateGravity() {
+    // Convert slider values to actual values
+    const mass1 = Math.pow(10, parseFloat(mass1Slider.value));
+    const mass2 = Math.pow(10, parseFloat(mass2Slider.value));
+    const distance = Math.pow(10, parseFloat(distanceSlider.value));
+    
+    // Update displays
+    mass1Display.textContent = mass1.toExponential(1);
+    mass2Display.textContent = mass2.toExponential(1);
+    distanceDisplay.textContent = distance.toExponential(1);
+    
+    // Calculate Newton's force
+    const newtonForce = G * mass1 * mass2 / (distance * distance);
+    
+    // Pope's force (same result, different derivation)
+    const popeForce = newtonForce; // For this demo, same calculation
+    
+    newtonForceDisplay.textContent = newtonForce.toExponential(2);
+    popeForceDisplay.textContent = popeForce.toExponential(2);
+    
+    // Draw visualization
+    const { ctx, width, height } = getCanvasContext('gravity-canvas');
+    ctx.clearRect(0, 0, width, height);
+    
+    const fg = getComputedColor('--fg');
+    const accent = getComputedColor('--accent');
+    const accent2 = getComputedColor('--accent2');
+    
+    // Draw masses
+    const scale = Math.min(width, height) * 0.3;
+    const mass1Size = Math.log10(mass1) * 3;
+    const mass2Size = Math.log10(mass2) * 3;
+    const separation = Math.max(100, Math.min(scale, distance / 1e6 * scale));
+    
+    const centerX = width / 2;
+    const centerY = height / 2;
+    
+    const m1X = centerX - separation / 2;
+    const m2X = centerX + separation / 2;
+    
+    // Mass 1
+    ctx.fillStyle = accent;
+    ctx.beginPath();
+    ctx.arc(m1X, centerY, mass1Size, 0, 2 * Math.PI);
+    ctx.fill();
+    
+    // Mass 2  
+    ctx.fillStyle = accent2;
+    ctx.beginPath();
+    ctx.arc(m2X, centerY, mass2Size, 0, 2 * Math.PI);
+    ctx.fill();
+    
+    // Force arrows (Newton)
+    const arrowScale = Math.log10(newtonForce + 1e-20) / 10;
+    ctx.strokeStyle = '#ff6b6b';
+    ctx.lineWidth = 3;
+    
+    // Arrow from m1 to m2
+    ctx.beginPath();
+    ctx.moveTo(m1X + mass1Size, centerY);
+    ctx.lineTo(m1X + mass1Size + 30 + arrowScale * 20, centerY);
+    ctx.stroke();
+    
+    // Arrow from m2 to m1  
+    ctx.beginPath();
+    ctx.moveTo(m2X - mass2Size, centerY);
+    ctx.lineTo(m2X - mass2Size - 30 - arrowScale * 20, centerY);
+    ctx.stroke();
+    
+    // Distance label
+    ctx.fillStyle = fg;
+    ctx.font = '12px Georgia';
+    ctx.textAlign = 'center';
+    ctx.fillText(`r = ${distance.toExponential(1)} m`, centerX, centerY + 50);
+    
+    // Labels
+    ctx.fillText('m₁', m1X, centerY - mass1Size - 10);
+    ctx.fillText('m₂', m2X, centerY - mass2Size - 10);
+    
+    // Title
+    ctx.fillStyle = accent;
+    ctx.font = 'bold 16px Georgia';
+    ctx.fillText('Gravitational Force Calculation', centerX, 30);
+    
+    ctx.fillStyle = fg;
+    ctx.font = '10px Georgia';
+    ctx.fillText(`Force = ${newtonForce.toExponential(2)} N`, centerX, height - 20);
+  }
+  
+  mass1Slider.addEventListener('input', updateGravity);
+  mass2Slider.addEventListener('input', updateGravity);
+  distanceSlider.addEventListener('input', updateGravity);
+  
+  updateGravity();
+}
+
+// 7. Quantum Angular Momentum Interactive
+function initQuantumInteractive() {
+  const quantumSlider = document.getElementById('quantum-level');
+  const quantumDisplay = document.getElementById('quantum-n-display');
+  const angularMomentumDisplay = document.getElementById('angular-momentum');
+  const energyLevelDisplay = document.getElementById('energy-level');
+  const orbitalRadiusDisplay = document.getElementById('orbital-radius');
+  const quantumFrequencyDisplay = document.getElementById('quantum-frequency');
+  
+  const hbar = 1.055e-34; // reduced Planck constant
+  const me = 9.109e-31; // electron mass
+  const e = 1.602e-19; // elementary charge
+  const epsilon0 = 8.854e-12; // permittivity
+  const a0 = 5.292e-11; // Bohr radius
+  
+  function updateQuantum() {
+    const n = parseInt(quantumSlider.value);
+    quantumDisplay.textContent = n.toString();
+    
+    // Calculate quantum properties
+    const angularMomentum = n; // in units of ℏ
+    const energyLevel = -13.6 / (n * n); // eV
+    const orbitalRadius = n * n * a0 * 1e10; // Angstroms
+    const frequency = Math.abs(energyLevel) * e / hbar; // Hz
+    
+    // Update displays
+    angularMomentumDisplay.textContent = angularMomentum.toFixed(2);
+    energyLevelDisplay.textContent = energyLevel.toFixed(1);
+    orbitalRadiusDisplay.textContent = orbitalRadius.toFixed(2);
+    quantumFrequencyDisplay.textContent = frequency.toExponential(2);
+    
+    // Draw visualization
+    const { ctx, width, height } = getCanvasContext('quantum-canvas');
+    ctx.clearRect(0, 0, width, height);
+    
+    const fg = getComputedColor('--fg');
+    const accent = getComputedColor('--accent');
+    const accent2 = getComputedColor('--accent2');
+    
+    const centerX = width / 2;
+    const centerY = height / 2;
+    
+    // Draw nucleus
+    ctx.fillStyle = accent;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, 5, 0, 2 * Math.PI);
+    ctx.fill();
+    
+    // Draw electron orbits
+    for (let i = 1; i <= 5; i++) {
+      const radius = i * i * 20; // scaled orbital radius
+      const opacity = i === n ? 1 : 0.3;
+      
+      ctx.strokeStyle = i === n ? accent : fg;
+      ctx.globalAlpha = opacity;
+      ctx.lineWidth = i === n ? 3 : 1;
+      ctx.setLineDash(i === n ? [] : [5, 5]);
+      
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+      ctx.stroke();
+      
+      // Level labels
+      if (i <= 3 || i === n) {
+        ctx.fillStyle = i === n ? accent : fg;
+        ctx.font = '10px Georgia';
+        ctx.textAlign = 'center';
+        ctx.fillText(`n=${i}`, centerX + radius + 15, centerY);
+      }
+    }
+    
+    ctx.globalAlpha = 1;
+    ctx.setLineDash([]);
+    
+    // Draw electron at current level
+    const currentRadius = n * n * 20;
+    const electronAngle = Date.now() * 0.001; // rotating electron
+    const electronX = centerX + currentRadius * Math.cos(electronAngle);
+    const electronY = centerY + currentRadius * Math.sin(electronAngle);
+    
+    ctx.fillStyle = accent2;
+    ctx.beginPath();
+    ctx.arc(electronX, electronY, 3, 0, 2 * Math.PI);
+    ctx.fill();
+    
+    // Draw angular momentum vector
+    ctx.strokeStyle = '#ff6b6b';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY);
+    ctx.lineTo(centerX, centerY - n * 15);
+    ctx.stroke();
+    
+    // Arrow head
+    ctx.fillStyle = '#ff6b6b';
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY - n * 15);
+    ctx.lineTo(centerX - 5, centerY - n * 15 + 10);
+    ctx.lineTo(centerX + 5, centerY - n * 15 + 10);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Labels
+    ctx.fillStyle = accent;
+    ctx.font = 'bold 16px Georgia';
+    ctx.textAlign = 'center';
+    ctx.fillText('Quantized Angular Momentum', centerX, 30);
+    
+    ctx.fillStyle = fg;
+    ctx.font = '12px Georgia';
+    ctx.fillText(`J = ${n}ℏ`, centerX + 20, centerY - n * 15);
+    ctx.fillText(`E = ${energyLevel.toFixed(1)} eV`, centerX, height - 40);
+    ctx.fillText(`r = ${orbitalRadius.toFixed(2)} Å`, centerX, height - 20);
+  }
+  
+  quantumSlider.addEventListener('input', updateQuantum);
+  updateQuantum();
+}
+
+// Initialize all interactives
+document.addEventListener('DOMContentLoaded', () => {
+  // Small delay to ensure fonts are loaded
+  setTimeout(() => {
+    initTriangleInteractive();
+    initClocksInteractive();
+    initConeInteractive();
+    initMassEnergyInteractive();
+    initBalmerInteractive();
+    initGravityInteractive();
+    initQuantumInteractive();
+  }, 100);
+});
+
+// Handle window resize for canvases
+window.addEventListener('resize', () => {
+  setTimeout(() => {
+    initTriangleInteractive();
+    initClocksInteractive();
+    initConeInteractive();
+    initMassEnergyInteractive();
+    initBalmerInteractive();
+    initGravityInteractive();
+    initQuantumInteractive();
+  }, 100);
+});
+</script>
+
+</section>
+
 </div><!-- .container -->
 
 <script>
