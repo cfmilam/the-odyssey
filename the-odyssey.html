@@ -1936,5 +1936,16 @@ themeBtn.addEventListener('click', () => {
 })();
 </script>
 
+
+<script>
+window.addEventListener('beforeprint', function() {
+  document.documentElement.setAttribute('data-theme', 'light');
+});
+window.addEventListener('afterprint', function() {
+  var saved = localStorage.getItem('odyssey-theme');
+  if (saved !== 'light') document.documentElement.removeAttribute('data-theme');
+});
+</script>
+
 </body>
 </html>
