@@ -252,7 +252,15 @@ sup a { color: var(--accent); text-decoration: none; font-size: 0.75rem; }
     border-left: 1.5pt solid #666;
     page-break-inside: avoid;
   }
-  body { background: #fff !important; color: #000 !important; }
+  :root, [data-theme="light"], body { 
+    --bg: #fff !important; 
+    --fg: #000 !important; 
+    --accent: #333 !important;
+    --border: #ccc !important;
+    --meta: #555 !important;
+    background: #fff !important; 
+    color: #000 !important; 
+  }
   * { color: #000 !important; background: transparent !important; }
   a { color: #000 !important; text-decoration: underline; }
   .footnote { color: #333 !important; }
