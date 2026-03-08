@@ -1864,7 +1864,7 @@ And that is how Goodness is foiled.' ■</p></div>
 
 <!-- 1. Space-Time Triangle Interactive -->
 <h2 id="interactive-triangle">The Space-Time Triangle</h2>
-<p>This is the heart of Pope's geometric approach to relativity. Drag the velocity slider to see how proper time (tP), relative time (tR), and distance (s/c) form a Pythagorean relationship. The triangle makes the space-time geometry visually obvious.</p>
+<p>This is the heart of Pope's geometric approach to relativity. Drag the velocity slider to see how proper time (t<sub>P</sub>), relative time (t<sub>R</sub>), and distance (s/c) form a Pythagorean relationship. The triangle makes the space-time geometry visually obvious.</p>
 
 <div style="background: var(--surface); padding: 1.5rem; border-radius: 8px; margin: 1rem 0;">
   <canvas id="triangle-canvas" width="600" height="400" style="width: 100%; max-width: 600px; height: auto; background: var(--bg); border-radius: 4px;"></canvas>
@@ -1874,8 +1874,8 @@ And that is how Goodness is foiled.' ■</p></div>
     <input type="range" id="velocity-slider" min="0" max="0.99" step="0.01" value="0" style="width: 100%; margin-bottom: 1rem;">
     
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.5rem; font-family: monospace; font-size: 0.9rem;">
-      <div>Proper Time (tP): <span id="tp-value">1.00</span> s</div>
-      <div>Relative Time (tR): <span id="tr-value">1.00</span> s</div>
+      <div>Proper Time (t<sub>P</sub>): <span id="tp-value">1.00</span> s</div>
+      <div>Relative Time (t<sub>R</sub>): <span id="tr-value">1.00</span> s</div>
       <div>Distance (s/c): <span id="sc-value">0.00</span> s</div>
     </div>
   </div>
@@ -2157,7 +2157,7 @@ function initTriangleInteractive() {
     ctx.textAlign = 'center';
     
     // Proper time (horizontal)
-    ctx.fillText(`tP = ${tp.toFixed(2)}s`, (x1 + x2) / 2, y1 + 20);
+    ctx.fillText(`tₚ = ${tp.toFixed(2)}s`, (x1 + x2) / 2, y1 + 20);
     
     // Distance/c (vertical)
     ctx.save();
@@ -2169,7 +2169,7 @@ function initTriangleInteractive() {
     // Relative time (hypotenuse)
     const midX = (x1 + x3) / 2 - 30;
     const midY = (y1 + y3) / 2;
-    ctx.fillText(`tR = ${tr.toFixed(2)}s`, midX, midY);
+    ctx.fillText(`tᵣ = ${tr.toFixed(2)}s`, midX, midY);
     
     // Right angle indicator
     if (v > 0.05) {
@@ -2191,7 +2191,7 @@ function initTriangleInteractive() {
     
     ctx.fillStyle = fg;
     ctx.font = '12px Georgia';
-    ctx.fillText('tR² = (s/c)² + tP²', width / 2, height - 20);
+    ctx.fillText('tᵣ² = (s/c)² + tₚ²', width / 2, height - 20);
   }
   
   velocitySlider.addEventListener('input', drawTriangle);
